@@ -1,0 +1,73 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+    @{
+            var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+     }
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - ProjectTracker</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/ProjectTracker.styles.css" asp-append-version="true" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- Left Sidebar -->
+        <aside class="sidebar">
+            <div class="logo">
+                Project Tracker
+            </div>
+            <ul class="menu">
+                <li>
+                    <a asp-controller="Dashboard" asp-action="Index">
+                        <i class="bi bi-speedometer2"></i>
+                        Dashboard
+                    </a>
+                </li>
+                <li>
+                    <a asp-controller="Projects" asp-action="Index" class="@(controller == "Projects" ? "active" : "")">
+                        <i class="bi bi-folder"></i>
+                        Projects
+                    </a>
+                </li>
+                <li>
+                    <a asp-controller="Boards" asp-action="Index">
+                        <i class="bi bi-kanban"></i>
+                        Boards
+                    </a>
+                </li>
+                <li>
+                    <a asp-controller="Tasks" asp-action="Index">
+                        <i class="bi bi-check-square"></i>
+                        Tasks
+                    </a>
+                </li>
+                <li>
+                    <a asp-controller="Sprint" asp-action="Index">
+                        <i class="bi bi-calendar"></i>
+                        Sprint
+                    </a>
+                </li>
+                <li>
+                    <a asp-controller="Notifications" asp-action="Index">
+                        <i class="bi bi-bell"></i>
+                        Notifications
+                    </a>
+                </li>
+            </ul>
+        </aside>
+
+        <!-- Main Area -->
+
+        <main class="content">
+            @RenderBody()
+        </main>
+    </div>
+
+    @RenderSection("Scripts", required: false)
+</body>
+</html>

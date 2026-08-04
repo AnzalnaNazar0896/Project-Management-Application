@@ -1,0 +1,110 @@
+﻿@using ProjectTracker.Models.DTOs
+@using ProjectTracker.Models.DTOs.Project
+@using ProjectTracker.Models.Models.DTOs.Project
+@model ProjectsDashboardDTO
+
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<div class="dashboard-container">
+
+    <h1>
+        Project Dashboard
+    </h1>
+    <div class="card-container">
+            <a asp-controller="Projects" asp-action="Index" style="text-decoration:none;">
+                <div class="card bg-primary text-white p-3">
+                    <h2>
+                        @Model.TotalProjects
+                    </h2>
+                    <p>
+                        Total Projects
+                    </p>
+                    <small>
+                        Click to view projects
+                    </small>
+                </div>
+            </a>
+
+        <div class="dashboard-card green">
+            <h2>
+                @Model.ActiveProjects
+            </h2>
+            <p>
+                Active Projects
+            </p>
+        </div>
+
+        <div class="dashboard-card orange">
+            <h2>
+                @Model.TotalProjects
+            </h2>
+            <p>
+                Total Tasks
+            </p>
+        </div>
+
+        <div class="dashboard-card red">
+            <h2>
+                @Model.CompletedProjects
+            </h2>
+            <p>
+                Completed Tasks
+            </p>
+        </div>
+    </div>
+
+
+
+    <div class="dashboard-section">
+        <h2>
+            Project Progress
+        </h2>
+        <div class="progress-box">
+            <div class="progress">
+                <div class="progress-bar"
+                     style="width:80%">
+                    80%
+                </div>
+            </div>
+
+            <p>
+                Website Development
+            </p>
+        </div>
+
+        <div class="progress-box">
+            <div class="progress">
+                <div class="progress-bar green-bar"
+                     style="width:50%">
+                    50%
+                </div>
+
+            </div>
+            <p>
+                Mobile Application
+            </p>
+        </div>
+    </div>
+
+    <div class="dashboard-section">
+        <h2>
+            Recent Notifications
+        </h2>
+
+        <ul class="notification-list">
+            <li>
+                Task Completed - Login Module
+            </li>
+
+            <li>
+                Sprint Started
+            </li>
+
+            <li>
+                New Board Created
+            </li>
+        </ul>
+    </div>
+</div>

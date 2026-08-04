@@ -1,0 +1,104 @@
+﻿@using ProjectTracker.Models.DTOs
+@using ProjectTracker.Models.DTOs.Project
+@using ProjectTracker.Models.Models.DTOs.Project
+@model ProjectsDashboardDTO
+
+@{
+    ViewData["Title"] = "Projects";
+}
+
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+
+    <h2>Projects</h2>
+
+    <a asp-action="Create" class="btn btn-primary">
+        + Add Project
+    </a>
+
+</div>
+
+<div class="row mb-4">
+
+    <div class="col-md-4">
+        <div class="dashboard-card">
+            <h5>Total Projects</h5>
+            <h2>@Model.TotalProjects</h2>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="dashboard-card green">
+            <h5>Active Projects</h5>
+            <h2>@Model.ActiveProjects</h2>
+        </div>
+    </div>
+
+    <div class="col-md-4">
+        <div class="dashboard-card orange">
+            <h5>Completed Projects</h5>
+            <h2>@Model.CompletedProjects</h2>
+        </div>
+    </div>
+
+</div>
+
+<div class="mb-4">
+
+    <input class="form-control"
+           placeholder="Search Project..." />
+
+</div>
+
+<div class="row">
+
+    @foreach (var project in Model.Projects)
+    {
+        <div class="col-lg-4">
+
+            <div class="project-card">
+
+                <h4>@project.ProjectName</h4>
+
+                <span class="badge @(project.IsCompleted ? "project-status-completed" : "project-status-active")">
+                    @project.Status
+                </span>
+
+                <br /><br />
+
+                <div class="progress">
+
+                    <div class="progress-bar"
+                         style="width:@project.Progress%">
+                        @project.Progress%
+                    </div>
+                </div>
+                <br />
+                <p>
+                    <strong>Start:</strong>
+                    @(project.StartDate?.ToString("dd-MMM-yyyy") ?? "-")
+                </p>
+
+                <p>
+                    <strong>End:</strong>
+                    @(project.EndDate?.ToString("dd-MMM-yyyy") ?? "-")
+                </p>
+
+                <a asp-action="Info"
+                   asp-route-id="@project.Id"
+                   class="btn btn-outline-primary btn-sm">
+                    Info
+                </a>
+
+                <a asp-action="Tasks"
+                   asp-route-id="@project.Id"
+                   class="btn btn-outline-secondary btn-sm">
+                    Tasks
+                </a>
+
+            </div>
+
+        </div>
+    }
+
+</div>

@@ -1,0 +1,49 @@
+@using ProjectTracker.Models
+@using ProjectTracker.Models.Models.Entities
+@using ProjectTracker.Models.Models.Enums.Entities
+@model List<Tasks>
+
+@{
+    ViewData["Title"] = "Project Tasks";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2>Tasks</h2>
+        <p class="text-muted mb-0">@ViewBag.ProjectName</p>
+    </div>
+    <a asp-action="Index" class="btn btn-secondary">Back to Projects</a>
+</div>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">No tasks are available for this project.</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover bg-white">
+            <thead>
+                <tr>
+                    <th>Task</th>
+                    <th>Description</th>
+                    <th>Status</th>
+                    <th>Priority</th>
+                    <th>Due Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var task in Model)
+                {
+                    <tr>
+                        <td>@task.Title</td>
+                        <td>@task.Description</td>
+                        <td>@task.Status</td>
+                        <td>@task.Priority</td>
+                        <td>@task.DueDate.ToString("dd-MMM-yyyy")</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
