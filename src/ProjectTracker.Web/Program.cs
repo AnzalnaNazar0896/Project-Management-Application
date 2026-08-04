@@ -4,7 +4,6 @@ using ProjectTracker.Core.Services;
 using ProjectTracker.Data;
 using ProjectTracker.Infrastructure.Repositories;
 using ProjectTracker.Interfaces;
-using ProjectTracker.Repositories;
 using ProjectTracker.Services;
 
 var builder = WebApplication.CreateBuilder(args);

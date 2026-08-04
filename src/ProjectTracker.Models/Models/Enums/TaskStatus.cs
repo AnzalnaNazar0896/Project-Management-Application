@@ -12,6 +12,7 @@ namespace ProjectTracker.Models.Models.Enums
         InProgress,
         Review,
         Completed,
+        Pending,
         Blocked
     }
 }

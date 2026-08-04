@@ -2,6 +2,7 @@
 using ProjectTracker.Interfaces;
 using ProjectTracker.Models;
 using ProjectTracker.Models.Models.DTOs.Task;
+using ProjectTracker.Models.Models.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -19,7 +20,7 @@ namespace ProjectTracker.Core.Services
             _repository = repository;
         }
 
-        public List<Task> GetBoardTasks(int boardId)
+        public List<Tasks> GetBoardTasks(int boardId)
         {
             return _repository.GetByBoardId(boardId);
         }

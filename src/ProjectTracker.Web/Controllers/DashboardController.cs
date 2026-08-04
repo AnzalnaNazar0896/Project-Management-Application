@@ -1,8 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using ProjectTracker.Models.DTOs;
+using ProjectTracker.Models.Models.DTOs.Project;
 using ProjectTracker.Services;
 
-namespace ProjectTracker.Controllers
+namespace ProjectTracker.Web.Controllers
 {
     public class DashboardController : Controller
     {

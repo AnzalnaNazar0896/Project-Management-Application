@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
+﻿
 namespace ProjectTracker.Models.Models.DTOs.Project
 {
     public class ProjectsDashboardDTO
@@ -25,5 +20,6 @@ namespace ProjectTracker.Models.Models.DTOs.Project
         public int InProgressTasks { get; set; }
 
         public int PendingTasks { get; set; }
+        public List<ProjectTracker.Models.Models.Entities.Project> Projects { get; set; } = new();
     }
 }

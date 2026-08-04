@@ -5,7 +5,7 @@
         public string BoardName { get; set; }
         public int ProjectId { get; set; }
         public Project Project { get; set; }
-        public List<Tasks> Tasks { get; set; } = new List<Tasks>();
+        public ICollection<Tasks> Tasks { get; set; } = new List<Tasks>();
         public Board()
         {
 

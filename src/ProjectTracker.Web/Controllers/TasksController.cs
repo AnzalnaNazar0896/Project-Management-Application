@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ProjectTracker.Core.Services;
 using ProjectTracker.Models.Models.DTOs.Task;
+using ProjectTracker.Models.Models.Entities;
+using TaskStatus = ProjectTracker.Models.Models.Enums.TaskStatus;
 
 namespace ProjectTracker.Web.Controllers
 {
@@ -28,8 +30,8 @@ namespace ProjectTracker.Web.Controllers
             return View(new CreateTaskDTO
             {
                 BoardId = boardId,
-                Status = status,
-                Priority = "Medium"
+                Status = TaskStatus.Pending,
+                Priority = TaskPriority.Medium
             });
         }
 

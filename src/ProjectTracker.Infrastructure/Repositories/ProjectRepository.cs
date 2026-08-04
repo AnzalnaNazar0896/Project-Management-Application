@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using ProjectTask = ProjectTracker.Models.Models.Entities.Tasks;
 using ProjectTracker.Models.Models.Entities;
 
-namespace ProjectTracker.Repositories
+namespace ProjectTracker.Infrastructure.Repositories
 {
     public class ProjectRepository : IProjectRepository
     {
