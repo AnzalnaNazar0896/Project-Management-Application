@@ -53,17 +53,19 @@ namespace ProjectTracker.Web.Controllers
 
             var roles = await _currentUser.GetRolesAsync();
             var employeeId = await _currentUser.GetEmployeeIdAsync();
-            var tasks = _taskService.GetAllSummaries(filter);
-
-            if (!roles.Contains(AppRoles.Admin))
-            {
-                tasks = tasks.Where(t =>
-                    roles.Contains(AppRoles.ProjectManager) ||
-                    t.AssignedEmployeeId == employeeId).ToList();
-            }
+            var tasks = _taskService.GetSummariesForUser(roles, employeeId, filter);
 
             ViewBag.StatusFilter = status;
             return View(tasks);
+        }
+
+        public async Task<IActionResult> MyTasks()
+        {
+            var roles = await _currentUser.GetRolesAsync();
+            var employeeId = await _currentUser.GetEmployeeIdAsync();
+            var tasks = _taskService.GetSummariesForUser(roles, employeeId, null, myTasksOnly: true);
+            ViewBag.StatusFilter = "My Tasks";
+            return View("Index", tasks);
         }
 
         public IActionResult Board(int boardId)
@@ -82,11 +84,11 @@ namespace ProjectTracker.Web.Controllers
 
             var roles = await _currentUser.GetRolesAsync();
             var employeeId = await _currentUser.GetEmployeeIdAsync();
-            if (!_access.CanViewProject(roles, model.ProjectId, employeeId))
+            if (!_access.CanViewTask(roles, model.ProjectId, model.AssignedEmployeeId, employeeId))
                 return Forbid();
 
-            ViewBag.CanUpdateStatus = _access.CanUpdateTask(roles, model.AssignedEmployeeId, employeeId)
-                || _access.CanManageProject(roles, model.ProjectId, employeeId);
+            ViewBag.CanUpdateStatus = _access.CanUpdateTask(roles, model.ProjectId, model.AssignedEmployeeId, employeeId);
+            ViewBag.CanEdit = _access.CanManageProject(roles, model.ProjectId, employeeId);
             return View(model);
         }
 
@@ -113,7 +115,7 @@ namespace ProjectTracker.Web.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = $"{AppRoles.Admin},{AppRoles.ProjectManager}")]
-        public IActionResult Create(CreateTaskDTO model)
+        public async Task<IActionResult> Create(CreateTaskDTO model)
         {
             if (!ModelState.IsValid)
             {
@@ -121,8 +123,70 @@ namespace ProjectTracker.Web.Controllers
                 return View(model);
             }
 
-            var taskId = _taskService.CreateTask(model);
+            var userName = await _currentUser.GetDisplayNameAsync();
+            var taskId = _taskService.CreateTask(model, userName);
             return RedirectToAction(nameof(Details), new { id = taskId });
+        }
+
+        [HttpGet]
+        [Authorize(Roles = $"{AppRoles.Admin},{AppRoles.ProjectManager}")]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var model = _taskService.GetEditModel(id);
+            if (model == null)
+                return NotFound();
+
+            var roles = await _currentUser.GetRolesAsync();
+            var employeeId = await _currentUser.GetEmployeeIdAsync();
+            if (!_access.CanManageProject(roles, model.ProjectId, employeeId))
+                return Forbid();
+
+            ViewBag.Sprints = _sprintService.GetProjectSprints(model.ProjectId);
+            ViewBag.Boards = _boardService.GetProjectBoards(model.ProjectId);
+            ViewBag.Employees = _employeeService.GetAll();
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = $"{AppRoles.Admin},{AppRoles.ProjectManager}")]
+        public async Task<IActionResult> Edit(EditTaskDTO model)
+        {
+            var roles = await _currentUser.GetRolesAsync();
+            var employeeId = await _currentUser.GetEmployeeIdAsync();
+            if (!_access.CanManageProject(roles, model.ProjectId, employeeId))
+                return Forbid();
+
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Sprints = _sprintService.GetProjectSprints(model.ProjectId);
+                ViewBag.Boards = _boardService.GetProjectBoards(model.ProjectId);
+                ViewBag.Employees = _employeeService.GetAll();
+                return View(model);
+            }
+
+            var userName = await _currentUser.GetDisplayNameAsync();
+            _taskService.UpdateTask(model, userName);
+            return RedirectToAction(nameof(Details), new { id = model.Id });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = $"{AppRoles.Admin},{AppRoles.ProjectManager}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var task = _taskService.GetTaskDetails(id);
+            if (task == null)
+                return NotFound();
+
+            var roles = await _currentUser.GetRolesAsync();
+            var employeeId = await _currentUser.GetEmployeeIdAsync();
+            if (!_access.CanManageProject(roles, task.ProjectId, employeeId))
+                return Forbid();
+
+            var userName = await _currentUser.GetDisplayNameAsync();
+            _taskService.DeleteTask(id, userName);
+            return RedirectToAction(nameof(Index));
         }
 
         [HttpPost]
@@ -135,8 +199,7 @@ namespace ProjectTracker.Web.Controllers
 
             var roles = await _currentUser.GetRolesAsync();
             var employeeId = await _currentUser.GetEmployeeIdAsync();
-            if (!_access.CanUpdateTask(roles, task.AssignedEmployeeId, employeeId)
-                && !_access.CanManageProject(roles, task.ProjectId, employeeId))
+            if (!_access.CanUpdateTask(roles, task.ProjectId, task.AssignedEmployeeId, employeeId))
                 return Forbid();
 
             var userName = await _currentUser.GetDisplayNameAsync();
@@ -154,7 +217,7 @@ namespace ProjectTracker.Web.Controllers
 
             var roles = await _currentUser.GetRolesAsync();
             var employeeId = await _currentUser.GetEmployeeIdAsync();
-            if (!_access.CanViewProject(roles, task.ProjectId, employeeId))
+            if (!_access.CanViewTask(roles, task.ProjectId, task.AssignedEmployeeId, employeeId))
                 return Forbid();
 
             var displayName = await _currentUser.GetDisplayNameAsync() ?? "User";
@@ -172,7 +235,7 @@ namespace ProjectTracker.Web.Controllers
 
             var roles = await _currentUser.GetRolesAsync();
             var employeeId = await _currentUser.GetEmployeeIdAsync();
-            if (!_access.CanViewProject(roles, task.ProjectId, employeeId))
+            if (!_access.CanViewTask(roles, task.ProjectId, task.AssignedEmployeeId, employeeId))
                 return Forbid();
 
             var uploadRoot = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");

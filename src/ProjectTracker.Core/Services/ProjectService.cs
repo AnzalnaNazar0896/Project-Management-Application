@@ -18,6 +18,7 @@ namespace ProjectTracker.Services
         private readonly ISprintRepository _sprintRepository;
         private readonly IAttachmentRepository _attachmentRepository;
         private readonly NotificationService _notificationService;
+        private readonly ActivityService _activityService;
 
         public ProjectService(
             IProjectRepository repository,
@@ -27,7 +28,8 @@ namespace ProjectTracker.Services
             IBoardRepository boardRepository,
             ISprintRepository sprintRepository,
             IAttachmentRepository attachmentRepository,
-            NotificationService notificationService)
+            NotificationService notificationService,
+            ActivityService activityService)
         {
             _repository = repository;
             _memberRepository = memberRepository;
@@ -37,6 +39,7 @@ namespace ProjectTracker.Services
             _sprintRepository = sprintRepository;
             _attachmentRepository = attachmentRepository;
             _notificationService = notificationService;
+            _activityService = activityService;
         }
 
         public int CreateProject(CreateProjectDTO model, string? creatorUserName = null)
@@ -80,6 +83,9 @@ namespace ProjectTracker.Services
             {
                 _notificationService.NotifyProjectCreated(project.ProjectName, creatorUserName);
             }
+
+            _activityService.Log("Created", "Project", project.Id, project.Id, creatorUserName ?? "System",
+                $"Project '{project.ProjectName}' was created.");
 
             return project.Id;
         }
@@ -181,6 +187,7 @@ namespace ProjectTracker.Services
                 Tasks = tasks.Select(t => t.ToSummary()).ToList(),
                 Attachments = attachments.Select(a => a.ToDto()).ToList(),
                 RecentNotifications = _notificationService.GetRecent(5).Select(n => n.ToDto()).ToList(),
+                RecentActivity = _activityService.GetByProject(id, 15),
                 TotalTasks = tasks.Count,
                 CompletedTasks = tasks.Count(t => t.Status.IsCompleted()),
                 PendingTasks = tasks.Count(t => t.Status.IsPending()),

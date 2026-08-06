@@ -1,3 +1,4 @@
+using ProjectTracker.Models.Models.DTOs.Activity;
 using ProjectTracker.Models.Models.DTOs.Attachment;
 using ProjectTracker.Models.Models.DTOs.Board;
 using ProjectTracker.Models.Models.DTOs.Notification;
@@ -23,6 +24,7 @@ namespace ProjectTracker.Models.Models.DTOs.Project
         public List<TaskSummaryDTO> Tasks { get; set; } = new();
         public List<AttachmentDTO> Attachments { get; set; } = new();
         public List<NotificationDTO> RecentNotifications { get; set; } = new();
+        public List<ActivityLogDTO> RecentActivity { get; set; } = new();
 
         public int TotalTasks { get; set; }
         public int CompletedTasks { get; set; }

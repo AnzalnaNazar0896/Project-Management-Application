@@ -136,12 +136,23 @@ body.theme-dark {
     min-height: 320px;
 }
 
+.kanban-dropzone {
+    min-height: 200px;
+    border-radius: 0.5rem;
+    padding: 0.25rem;
+}
+
+.kanban-dropzone.border-primary {
+    outline: 2px dashed var(--accent);
+}
+
 .kanban-card {
     background: var(--bg-card);
     border: 1px solid var(--border);
     border-radius: 0.5rem;
     padding: 0.75rem;
     margin-bottom: 0.5rem;
+    cursor: grab;
 }
 
 .form-control, .form-select {

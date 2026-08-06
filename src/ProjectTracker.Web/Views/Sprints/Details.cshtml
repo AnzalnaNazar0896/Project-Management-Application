@@ -1,6 +1,9 @@
 @model ProjectTracker.Models.Models.DTOs.Sprint.SprintDetailsDTO
-@{ ViewData["Title"] = Model.SprintName; }
-<h1 class="page-title">@Model.SprintName</h1>
+@{ ViewData["Title"] = Model.SprintName; var canManage = (bool)(ViewBag.CanManage ?? false); }
+<div class="d-flex justify-content-between align-items-center mb-2">
+    <h1 class="page-title mb-0">@Model.SprintName</h1>
+    @if (canManage) { <a class="btn btn-sm btn-outline-light" asp-action="Edit" asp-route-id="@Model.Id">Edit Sprint</a> }
+</div>
 <div class="panel mb-3">
     <p><strong>Project:</strong> @Model.ProjectName | <strong>Status:</strong> @Model.Status</p>
     <p>@Model.StartDate.ToShortDateString() — @Model.EndDate.ToShortDateString()</p>

@@ -1,4 +1,5 @@
-﻿using ProjectTracker.Core.Interfaces;
+﻿using Microsoft.Extensions.Logging;
+using ProjectTracker.Core.Interfaces;
 using ProjectTracker.Models.Models.Entities;
 
 namespace ProjectTracker.Core.Services
@@ -6,10 +7,17 @@ namespace ProjectTracker.Core.Services
     public class NotificationService
     {
         private readonly INotificationRepository _repository;
+        private readonly IEmailNotificationService _email;
+        private readonly ILogger<NotificationService> _logger;
 
-        public NotificationService(INotificationRepository repository)
+        public NotificationService(
+            INotificationRepository repository,
+            IEmailNotificationService email,
+            ILogger<NotificationService> logger)
         {
             _repository = repository;
+            _email = email;
+            _logger = logger;
         }
 
         public void Create(string title, string message, string type, string receiver)
@@ -24,6 +32,8 @@ namespace ProjectTracker.Core.Services
                 CreatedDate = DateTime.Now,
                 UpdatedDate = DateTime.Now
             });
+
+            TrySendEmail(receiver, title, message);
         }
 
         public void Create(string message, string type, string receiver) =>
@@ -64,5 +74,20 @@ namespace ProjectTracker.Core.Services
         }
 
         public int Count() => _repository.Count();
+
+        private void TrySendEmail(string receiver, string subject, string body)
+        {
+            if (!_email.IsEnabled || string.IsNullOrWhiteSpace(receiver) || !receiver.Contains('@'))
+                return;
+
+            try
+            {
+                _email.SendAsync(receiver, subject, $"<p>{body}</p>").GetAwaiter().GetResult();
+            }
+            catch (Exception ex)
+            {
+                _logger.LogWarning(ex, "Failed to send email notification to {Receiver}", receiver);
+            }
+        }
     }
 }

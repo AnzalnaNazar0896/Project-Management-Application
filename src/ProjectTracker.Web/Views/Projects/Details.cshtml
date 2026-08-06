@@ -102,5 +102,15 @@
                 <div class="mb-2"><strong>@n.Title</strong> — @n.Message</div>
             }
         </div>
+        <div class="panel">
+            <h5>Activity Timeline</h5>
+            @foreach (var a in Model.RecentActivity)
+            {
+                <div class="timeline-item">
+                    <strong>@a.Action</strong> @a.EntityType
+                    <div class="text-muted small">@a.Details — @a.PerformedBy · @a.CreatedDate</div>
+                </div>
+            }
+        </div>
     </div>
 </div>

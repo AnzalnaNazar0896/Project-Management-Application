@@ -1,26 +1,80 @@
 @model ProjectTracker.Models.Models.DTOs.Board.BoardKanbanDTO
-@{ ViewData["Title"] = Model.BoardName; }
+@using TaskStatus = ProjectTracker.Models.Models.Enums.TaskStatus
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Antiforgery
+@{
+    ViewData["Title"] = Model.BoardName;
+    var token = Antiforgery.GetAndStoreTokens(Context).RequestToken;
+}
 <h1 class="page-title">@Model.BoardName <small class="text-muted">@Model.ProjectName</small></h1>
-<div class="kanban-board">
-    <div class="kanban-column">
+<p class="text-muted">Drag cards between columns to update status.</p>
+<div class="kanban-board" data-board-id="@Model.Id">
+    <div class="kanban-column" data-status="@TaskStatus.Pending">
         <h6>Pending</h6>
+        <div class="kanban-dropzone">
         @foreach (var t in Model.Pending)
         {
-            <div class="kanban-card"><a asp-controller="Tasks" asp-action="Details" asp-route-id="@t.Id">@t.Title</a><br /><small>@t.AssignedTo</small></div>
+            <div class="kanban-card" draggable="true" data-task-id="@t.Id">
+                <a asp-controller="Tasks" asp-action="Details" asp-route-id="@t.Id">@t.Title</a><br /><small>@t.AssignedTo</small>
+            </div>
         }
+        </div>
     </div>
-    <div class="kanban-column">
+    <div class="kanban-column" data-status="@TaskStatus.InProgress">
         <h6>In Progress</h6>
+        <div class="kanban-dropzone">
         @foreach (var t in Model.InProgress)
         {
-            <div class="kanban-card"><a asp-controller="Tasks" asp-action="Details" asp-route-id="@t.Id">@t.Title</a></div>
+            <div class="kanban-card" draggable="true" data-task-id="@t.Id">
+                <a asp-controller="Tasks" asp-action="Details" asp-route-id="@t.Id">@t.Title</a>
+            </div>
         }
+        </div>
     </div>
-    <div class="kanban-column">
+    <div class="kanban-column" data-status="@TaskStatus.Completed">
         <h6>Completed</h6>
+        <div class="kanban-dropzone">
         @foreach (var t in Model.Completed)
         {
-            <div class="kanban-card"><a asp-controller="Tasks" asp-action="Details" asp-route-id="@t.Id">@t.Title</a></div>
+            <div class="kanban-card" draggable="true" data-task-id="@t.Id">
+                <a asp-controller="Tasks" asp-action="Details" asp-route-id="@t.Id">@t.Title</a>
+            </div>
         }
+        </div>
     </div>
 </div>
+@section Scripts {
+<script>
+(() => {
+    const boardId = @Model.Id;
+    const token = '@token';
+    let dragged = null;
+
+    document.querySelectorAll('.kanban-card').forEach(card => {
+        card.addEventListener('dragstart', () => { dragged = card; card.classList.add('opacity-50'); });
+        card.addEventListener('dragend', () => { card.classList.remove('opacity-50'); dragged = null; });
+    });
+
+    document.querySelectorAll('.kanban-dropzone').forEach(zone => {
+        zone.addEventListener('dragover', e => { e.preventDefault(); zone.classList.add('border-primary'); });
+        zone.addEventListener('dragleave', () => zone.classList.remove('border-primary'));
+        zone.addEventListener('drop', async e => {
+            e.preventDefault();
+            zone.classList.remove('border-primary');
+            if (!dragged) return;
+            const column = zone.closest('.kanban-column');
+            const status = column.dataset.status;
+            const taskId = parseInt(dragged.dataset.taskId, 10);
+            zone.appendChild(dragged);
+            await fetch('@Url.Action("MoveTask", "Boards")', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': token
+                },
+                body: JSON.stringify({ taskId, boardId, status })
+            });
+        });
+    });
+})();
+</script>
+}
