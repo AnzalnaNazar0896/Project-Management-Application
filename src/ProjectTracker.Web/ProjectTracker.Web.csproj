@@ -4,6 +4,7 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>projecttracker-web-f7b3a1c2-4d5e-6f78-9abc-def012345678</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
