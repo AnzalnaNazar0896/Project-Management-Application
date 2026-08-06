@@ -774,7 +774,7 @@ namespace ProjectTracker.Infrastructure.Migrations
                     b.HasOne("ProjectTracker.Models.Models.Entities.Sprint", "Sprint")
                         .WithMany("Tasks")
                         .HasForeignKey("SprintId")
-                        .OnDelete(DeleteBehavior.SetNull);
+                        .OnDelete(DeleteBehavior.NoAction);
 
                     b.Navigation("AssignedEmployee");
 
