@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using ProjectTracker.Core.Mapping;
-using ProjectTracker.Core.Mapping;
 using ProjectTracker.Core.Services;
 using ProjectTracker.Models.Constants;
 
