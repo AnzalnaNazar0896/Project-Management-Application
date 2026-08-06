@@ -2,11 +2,6 @@
 using ProjectTracker.Core.Interfaces;
 using ProjectTracker.Data;
 using ProjectTracker.Models.Models.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ProjectTracker.Infrastructure.Repositories
 {
@@ -19,15 +14,25 @@ namespace ProjectTracker.Infrastructure.Repositories
             _context = context;
         }
 
-        public List<Board> GetByProjectId(int projectId)
-        {
-            return _context.Boards.Where(x => x.ProjectId == projectId).Include(x => x.Tasks).ToList();
-        }
+        public List<Board> GetAll() =>
+            _context.Boards
+                .Include(x => x.Project)
+                .Include(x => x.Tasks)
+                .OrderByDescending(x => x.CreatedDate)
+                .ToList();
 
-        public Board GetById(int id)
-        {
-            return _context.Boards.Include(x => x.Tasks).FirstOrDefault(x => x.Id == id);
-        }
+        public List<Board> GetByProjectId(int projectId) =>
+            _context.Boards
+                .Where(x => x.ProjectId == projectId)
+                .Include(x => x.Tasks)
+                .ToList();
+
+        public Board? GetById(int id) =>
+            _context.Boards
+                .Include(x => x.Project)
+                .Include(x => x.Tasks)
+                .ThenInclude(t => t.AssignedEmployee)
+                .FirstOrDefault(x => x.Id == id);
 
         public void Add(Board board)
         {
@@ -43,13 +48,16 @@ namespace ProjectTracker.Infrastructure.Repositories
 
         public void Delete(int id)
         {
-            var board = GetById(id);
-
+            var board = _context.Boards.FirstOrDefault(x => x.Id == id);
             if (board != null)
             {
                 _context.Boards.Remove(board);
                 _context.SaveChanges();
             }
         }
+
+        public bool Exists(int id) => _context.Boards.Any(x => x.Id == id);
+
+        public int Count() => _context.Boards.Count();
     }
 }

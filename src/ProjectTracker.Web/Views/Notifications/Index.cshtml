@@ -1,0 +1,23 @@
+@model List<ProjectTracker.Models.Models.DTOs.Notification.NotificationDTO>
+@{ ViewData["Title"] = "Notifications"; }
+<h1 class="page-title">Notifications</h1>
+<div class="panel">
+    @foreach (var n in Model)
+    {
+        <div class="d-flex justify-content-between align-items-start border-bottom border-secondary py-2">
+            <div>
+                <strong>@n.Title</strong> @if (!n.IsRead) { <span class="badge bg-warning text-dark">New</span> }
+                <div class="text-muted small">@n.Message</div>
+                <small class="text-muted">@n.CreatedDate</small>
+            </div>
+            @if (!n.IsRead)
+            {
+                <form asp-action="MarkRead" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="id" value="@n.Id" />
+                    <button class="btn btn-sm btn-outline-light" type="submit">Mark read</button>
+                </form>
+            }
+        </div>
+    }
+</div>

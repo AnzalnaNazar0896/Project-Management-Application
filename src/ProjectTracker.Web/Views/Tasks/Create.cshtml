@@ -1,0 +1,42 @@
+@model ProjectTracker.Models.Models.DTOs.Task.CreateTaskDTO
+@{
+    ViewData["Title"] = "Create Task";
+    var boards = ViewBag.Boards as List<ProjectTracker.Models.Models.DTOs.Board.BoardSummaryDTO> ?? new();
+    var sprints = ViewBag.Sprints as List<ProjectTracker.Models.Models.Entities.Sprint> ?? new();
+    var employees = ViewBag.Employees as List<ProjectTracker.Models.Models.Entities.Employee> ?? new();
+}
+<h1 class="page-title">Create Task</h1>
+<div class="panel">
+    <form asp-action="Create" method="post">
+        <div class="mb-3"><label asp-for="Title" class="form-label"></label><input asp-for="Title" class="form-control" /></div>
+        <div class="mb-3"><label asp-for="Description" class="form-label"></label><textarea asp-for="Description" class="form-control" rows="3"></textarea></div>
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <label asp-for="BoardId" class="form-label">Board</label>
+                <select asp-for="BoardId" class="form-select">
+                    @foreach (var b in boards) { <option value="@b.Id">@b.BoardName (@b.ProjectName)</option> }
+                </select>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label asp-for="SprintId" class="form-label">Sprint</label>
+                <select asp-for="SprintId" class="form-select">
+                    <option value="">—</option>
+                    @foreach (var s in sprints) { <option value="@s.Id">@s.SprintName</option> }
+                </select>
+            </div>
+            <div class="col-md-4 mb-3">
+                <label asp-for="AssignedEmployeeId" class="form-label">Assigned Member</label>
+                <select asp-for="AssignedEmployeeId" class="form-select">
+                    <option value="">—</option>
+                    @foreach (var e in employees) { <option value="@e.Id">@e.FullName</option> }
+                </select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4 mb-3"><label asp-for="Priority" class="form-label"></label><select asp-for="Priority" class="form-select" asp-items="Html.GetEnumSelectList<ProjectTracker.Models.Models.Entities.TaskPriority>()"></select></div>
+            <div class="col-md-4 mb-3"><label asp-for="Status" class="form-label"></label><select asp-for="Status" class="form-select" asp-items="Html.GetEnumSelectList<ProjectTracker.Models.Models.Enums.TaskStatus>()"></select></div>
+            <div class="col-md-4 mb-3"><label asp-for="DueDate" class="form-label"></label><input asp-for="DueDate" type="date" class="form-control" /></div>
+        </div>
+        <button class="btn btn-primary" type="submit">Create</button>
+    </form>
+</div>

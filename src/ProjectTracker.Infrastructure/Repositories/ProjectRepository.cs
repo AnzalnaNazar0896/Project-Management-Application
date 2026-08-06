@@ -1,39 +1,37 @@
-﻿using ProjectTracker.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using ProjectTracker.Data;
 using ProjectTracker.Interfaces;
-using Microsoft.EntityFrameworkCore;
-using ProjectTask = ProjectTracker.Models.Models.Entities.Tasks;
 using ProjectTracker.Models.Models.Entities;
+using ProjectTask = ProjectTracker.Models.Models.Entities.Tasks;
 
 namespace ProjectTracker.Infrastructure.Repositories
 {
     public class ProjectRepository : IProjectRepository
     {
-        private readonly List<Project> projects = new();
         private readonly ApplicationDbContext _context;
-        public ProjectRepository(
-         ApplicationDbContext context)
+
+        public ProjectRepository(ApplicationDbContext context)
         {
             _context = context;
         }
-        public List<Project> GetAll()
-        {
-            return _context.Projects.OrderByDescending(x => x.CreatedDate).ToList();
-        }
 
-        public Project GetById(int id)
-        {
-            return _context.Projects.FirstOrDefault(x => x.Id == id);
-        }
+        public List<Project> GetAll() =>
+            _context.Projects.OrderByDescending(x => x.CreatedDate).ToList();
 
-        public List<ProjectTask> GetTasksByProjectId(int projectId)
-        {
-            return _context.Boards
+        public List<Project> GetByIds(IEnumerable<int> projectIds) =>
+            _context.Projects.Where(p => projectIds.Contains(p.Id)).ToList();
+
+        public Project? GetById(int id) =>
+            _context.Projects.FirstOrDefault(x => x.Id == id);
+
+        public List<ProjectTask> GetTasksByProjectId(int projectId) =>
+            _context.Boards
                 .Where(b => b.ProjectId == projectId)
                 .Include(b => b.Tasks)
+                .ThenInclude(t => t.AssignedEmployee)
                 .SelectMany(b => b.Tasks)
                 .OrderBy(t => t.DueDate)
                 .ToList();
-        }
 
         public void Add(Project project)
         {
@@ -50,7 +48,6 @@ namespace ProjectTracker.Infrastructure.Repositories
         public void Delete(int id)
         {
             var project = GetById(id);
-
             if (project != null)
             {
                 _context.Projects.Remove(project);
@@ -58,14 +55,12 @@ namespace ProjectTracker.Infrastructure.Repositories
             }
         }
 
-        public int Count()
-        {
-            return _context.Projects.Count();
-        }
+        public bool Exists(int id) => _context.Projects.Any(x => x.Id == id);
 
-        public int ActiveCount()
-        {
-            return _context.Projects.Count(x => !x.IsCompleted);
-        }
+        public int Count() => _context.Projects.Count();
+
+        public int ActiveCount() => _context.Projects.Count(x => !x.IsCompleted);
+
+        public int CompletedCount() => _context.Projects.Count(x => x.IsCompleted);
     }
 }

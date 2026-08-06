@@ -1,0 +1,26 @@
+@model ProjectTracker.Models.Models.DTOs.Board.BoardKanbanDTO
+@{ ViewData["Title"] = Model.BoardName; }
+<h1 class="page-title">@Model.BoardName <small class="text-muted">@Model.ProjectName</small></h1>
+<div class="kanban-board">
+    <div class="kanban-column">
+        <h6>Pending</h6>
+        @foreach (var t in Model.Pending)
+        {
+            <div class="kanban-card"><a asp-controller="Tasks" asp-action="Details" asp-route-id="@t.Id">@t.Title</a><br /><small>@t.AssignedTo</small></div>
+        }
+    </div>
+    <div class="kanban-column">
+        <h6>In Progress</h6>
+        @foreach (var t in Model.InProgress)
+        {
+            <div class="kanban-card"><a asp-controller="Tasks" asp-action="Details" asp-route-id="@t.Id">@t.Title</a></div>
+        }
+    </div>
+    <div class="kanban-column">
+        <h6>Completed</h6>
+        @foreach (var t in Model.Completed)
+        {
+            <div class="kanban-card"><a asp-controller="Tasks" asp-action="Details" asp-route-id="@t.Id">@t.Title</a></div>
+        }
+    </div>
+</div>

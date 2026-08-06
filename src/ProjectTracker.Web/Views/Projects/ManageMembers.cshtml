@@ -1,0 +1,18 @@
+@model ProjectTracker.Models.Models.DTOs.Project.ManageProjectMembersDTO
+@{ ViewData["Title"] = "Manage Members"; }
+<h1 class="page-title">Manage Members — @Model.ProjectName</h1>
+<div class="panel">
+    <form asp-action="ManageMembers" method="post">
+        <input type="hidden" asp-for="ProjectId" />
+        <input type="hidden" asp-for="ProjectName" />
+        <label class="form-label">Select Members</label>
+        <select name="SelectedMemberIds" class="form-select" multiple size="8">
+            @foreach (var e in Model.AvailableEmployees)
+            {
+                <option value="@e.Id" selected="@(Model.SelectedMemberIds.Contains(e.Id) ? "selected" : null)">@e.Name (@e.Email)</option>
+            }
+        </select>
+        <button type="submit" class="btn btn-primary mt-3">Save Members</button>
+        <a class="btn btn-outline-light mt-3" asp-action="Details" asp-route-id="@Model.ProjectId">Back</a>
+    </form>
+</div>

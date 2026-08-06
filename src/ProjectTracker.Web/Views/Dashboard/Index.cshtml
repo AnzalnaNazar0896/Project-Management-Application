@@ -1,108 +1,81 @@
-﻿@using ProjectTracker.Models.Models.DTOs.Project
-@model ProjectsDashboardDTO
-
+﻿@model ProjectTracker.Models.Models.DTOs.Dashboard.DashboardIndexDTO
 @{
     ViewData["Title"] = "Dashboard";
 }
 
-<div class="dashboard-container">
+<h1 class="page-title">Dashboard</h1>
 
-    <h1>
-        Project Dashboard
-    </h1>
-    <div class="card-container">
-            <a asp-controller="Projects" asp-action="Index" style="text-decoration:none;">
-                <div class="card bg-primary text-white p-3">
-                    <h2>
-                        @Model.TotalProjects
-                    </h2>
-                    <p>
-                        Total Projects
-                    </p>
-                    <small>
-                        Click to view projects
-                    </small>
-                </div>
-            </a>
+<div class="row g-3 mb-4">
+    <div class="col-md-3 col-sm-6"><a class="stat-card" asp-controller="Projects" asp-action="Index"><h3>@Model.TotalProjects</h3><p>Total Projects</p></a></div>
+    <div class="col-md-3 col-sm-6"><a class="stat-card" asp-controller="Projects" asp-action="Index"><h3>@Model.ActiveProjects</h3><p>Active Projects</p></a></div>
+    <div class="col-md-3 col-sm-6"><a class="stat-card" asp-controller="Projects" asp-action="Index"><h3>@Model.CompletedProjects</h3><p>Completed Projects</p></a></div>
+    <div class="col-md-3 col-sm-6"><a class="stat-card" asp-controller="Boards" asp-action="Index"><h3>@Model.TotalBoards</h3><p>Boards</p></a></div>
+    <div class="col-md-3 col-sm-6"><a class="stat-card" asp-controller="Sprints" asp-action="Index"><h3>@Model.TotalSprints</h3><p>Sprints</p></a></div>
+    <div class="col-md-3 col-sm-6"><a class="stat-card" asp-controller="Tasks" asp-action="Index"><h3>@Model.TotalTasks</h3><p>Tasks</p></a></div>
+    <div class="col-md-3 col-sm-6"><a class="stat-card" asp-controller="Tasks" asp-action="Index" asp-route-status="Completed"><h3>@Model.CompletedTasks</h3><p>Completed Tasks</p></a></div>
+    <div class="col-md-3 col-sm-6"><a class="stat-card" asp-controller="Tasks" asp-action="Index" asp-route-status="Pending"><h3>@Model.PendingTasks</h3><p>Pending Tasks</p></a></div>
+    <div class="col-md-3 col-sm-6"><a class="stat-card" asp-controller="Notifications" asp-action="Index"><h3>@Model.TotalNotifications</h3><p>Notifications</p></a></div>
+    <div class="col-md-3 col-sm-6"><a class="stat-card" asp-controller="Comments" asp-action="Index"><h3>@Model.TotalComments</h3><p>Comments</p></a></div>
+    <div class="col-md-3 col-sm-6"><a class="stat-card" asp-controller="Attachments" asp-action="Index"><h3>@Model.TotalAttachments</h3><p>Attachments</p></a></div>
+</div>
 
-        <div class="dashboard-card green">
-            <h2>
-                @Model.ActiveProjects
-            </h2>
-            <p>
-                Active Projects
-            </p>
+<div class="row g-3">
+    <div class="col-lg-6">
+        <div class="panel">
+            <h5>Recent Projects</h5>
+            <ul class="list-unstyled mb-0">
+                @foreach (var p in Model.RecentProjects)
+                {
+                    <li class="mb-2"><a asp-controller="Projects" asp-action="Details" asp-route-id="@p.Id">@p.ProjectName</a> <span class="text-muted">@p.Progress%</span></li>
+                }
+            </ul>
         </div>
-
-        <div class="dashboard-card orange">
-            <h2>
-                @Model.TotalProjects
-            </h2>
-            <p>
-                Total Tasks
-            </p>
-        </div>
-
-        <div class="dashboard-card red">
-            <h2>
-                @Model.CompletedProjects
-            </h2>
-            <p>
-                Completed Tasks
-            </p>
+        <div class="panel">
+            <h5>Recent Tasks</h5>
+            <ul class="list-unstyled mb-0">
+                @foreach (var t in Model.RecentTasks)
+                {
+                    <li class="mb-2"><a asp-controller="Tasks" asp-action="Details" asp-route-id="@t.Id">@t.Title</a> <span class="badge bg-secondary">@t.Status</span></li>
+                }
+            </ul>
         </div>
     </div>
-
-
-
-    <div class="dashboard-section">
-        <h2>
-            Project Progress
-        </h2>
-        <div class="progress-box">
-            <div class="progress">
-                <div class="progress-bar"
-                     style="width:80%">
-                    80%
+    <div class="col-lg-6">
+        <div class="panel">
+            <h5>Upcoming Deadlines</h5>
+            @foreach (var t in Model.UpcomingDeadlines)
+            {
+                <div class="timeline-item">
+                    <strong>@t.Title</strong><br />
+                    <small class="text-muted">Due @t.DueDate.ToShortDateString()</small>
+                </div>
+            }
+        </div>
+        <div class="panel">
+            <h5>Recent Notifications</h5>
+            @foreach (var n in Model.RecentNotifications)
+            {
+                <div class="mb-2"><strong>@n.Title</strong><br /><small>@n.Message</small></div>
+            }
+        </div>
+        @if (Model.CurrentSprint != null)
+        {
+            <div class="panel">
+                <h5>Current Sprint</h5>
+                <p class="mb-1">@Model.CurrentSprint.SprintName</p>
+                <div class="progress" style="height:8px;">
+                    <div class="progress-bar" style="width:@Model.CurrentSprint.Progress%"></div>
                 </div>
             </div>
-
-            <p>
-                Website Development
-            </p>
-        </div>
-
-        <div class="progress-box">
-            <div class="progress">
-                <div class="progress-bar green-bar"
-                     style="width:50%">
-                    50%
-                </div>
-
+        }
+        <div class="panel">
+            <h5>Team Members</h5>
+            <div class="d-flex flex-wrap gap-2">
+                @foreach (var m in Model.TeamMembers)
+                {
+                    <span class="badge bg-primary">@m.Name (@m.Role)</span>
+                }
             </div>
-            <p>
-                Mobile Application
-            </p>
         </div>
-    </div>
-
-    <div class="dashboard-section">
-        <h2>
-            Recent Notifications
-        </h2>
-
-        <ul class="notification-list">
-            <li>
-                Task Completed - Login Module
-            </li>
-
-            <li>
-                Sprint Started
-            </li>
-
-            <li>
-                New Board Created
-            </li>
-        </ul>
     </div>
 </div>
