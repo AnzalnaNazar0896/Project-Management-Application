@@ -10,15 +10,18 @@ namespace ProjectTracker.Core.Services
         private readonly ISprintRepository _repository;
         private readonly IProjectMemberRepository _memberRepository;
         private readonly NotificationService _notificationService;
+        private readonly ActivityService _activityService;
 
         public SprintService(
             ISprintRepository repository,
             IProjectMemberRepository memberRepository,
-            NotificationService notificationService)
+            NotificationService notificationService,
+            ActivityService activityService)
         {
             _repository = repository;
             _memberRepository = memberRepository;
             _notificationService = notificationService;
+            _activityService = activityService;
         }
 
         public List<Sprint> GetProjectSprints(int projectId) => _repository.GetByProjectId(projectId);
@@ -84,6 +87,43 @@ namespace ProjectTracker.Core.Services
             }
 
             return sprint.Id;
+        }
+
+        public EditSprintDTO? GetEditModel(int id)
+        {
+            var sprint = _repository.GetById(id);
+            if (sprint == null)
+                return null;
+
+            return new EditSprintDTO
+            {
+                Id = sprint.Id,
+                SprintName = sprint.SprintName,
+                StartDate = sprint.StartDate,
+                EndDate = sprint.EndDate,
+                Status = sprint.Status,
+                ProjectId = sprint.ProjectId
+            };
+        }
+
+        public void UpdateSprint(EditSprintDTO model, string? performedBy = null)
+        {
+            if (model.EndDate < model.StartDate)
+                throw new InvalidOperationException("End date cannot be before start date.");
+
+            var sprint = _repository.GetById(model.Id);
+            if (sprint == null)
+                return;
+
+            sprint.SprintName = model.SprintName;
+            sprint.StartDate = model.StartDate;
+            sprint.EndDate = model.EndDate;
+            sprint.Status = model.Status;
+            sprint.UpdatedDate = DateTime.Now;
+            _repository.Update(sprint);
+
+            _activityService.Log("Updated", "Sprint", sprint.Id, sprint.ProjectId, performedBy ?? "System",
+                $"Sprint '{sprint.SprintName}' was updated.");
         }
 
         public int Count() => _repository.Count();

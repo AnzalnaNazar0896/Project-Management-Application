@@ -48,7 +48,42 @@ namespace ProjectTracker.Web.Controllers
             if (!_access.CanViewProject(roles, model.ProjectId, employeeId))
                 return Forbid();
 
+            ViewBag.CanManage = _access.CanManageProject(roles, model.ProjectId, employeeId);
             return View(model);
+        }
+
+        [Authorize(Roles = $"{AppRoles.Admin},{AppRoles.ProjectManager}")]
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var model = _sprintService.GetEditModel(id);
+            if (model == null)
+                return NotFound();
+
+            var roles = await _currentUser.GetRolesAsync();
+            var employeeId = await _currentUser.GetEmployeeIdAsync();
+            if (!_access.CanManageProject(roles, model.ProjectId, employeeId))
+                return Forbid();
+
+            return View(model);
+        }
+
+        [Authorize(Roles = $"{AppRoles.Admin},{AppRoles.ProjectManager}")]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(EditSprintDTO model)
+        {
+            var roles = await _currentUser.GetRolesAsync();
+            var employeeId = await _currentUser.GetEmployeeIdAsync();
+            if (!_access.CanManageProject(roles, model.ProjectId, employeeId))
+                return Forbid();
+
+            if (!ModelState.IsValid)
+                return View(model);
+
+            var userName = await _currentUser.GetDisplayNameAsync();
+            _sprintService.UpdateSprint(model, userName);
+            return RedirectToAction(nameof(Details), new { id = model.Id });
         }
 
         [Authorize(Roles = $"{AppRoles.Admin},{AppRoles.ProjectManager}")]

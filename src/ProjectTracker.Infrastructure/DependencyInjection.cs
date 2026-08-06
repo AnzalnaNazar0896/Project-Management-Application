@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using ProjectTracker.Core.Interfaces;
 using ProjectTracker.Core.Services;
+using ProjectTracker.Infrastructure.Email;
 using ProjectTracker.Infrastructure.Repositories;
 using ProjectTracker.Interfaces;
 using ProjectTracker.Services;
@@ -20,6 +21,8 @@ namespace ProjectTracker.Infrastructure
             services.AddScoped<IProjectMemberRepository, ProjectMemberRepository>();
             services.AddScoped<ICommentRepository, CommentRepository>();
             services.AddScoped<IAttachmentRepository, AttachmentRepository>();
+            services.AddScoped<IActivityLogRepository, ActivityLogRepository>();
+            services.AddScoped<IEmailNotificationService, SmtpEmailNotificationService>();
 
             services.AddScoped<ProjectService>();
             services.AddScoped<BoardService>();
@@ -33,6 +36,7 @@ namespace ProjectTracker.Infrastructure
             services.AddScoped<AttachmentService>();
             services.AddScoped<EmployeeService>();
             services.AddScoped<ProjectAccessService>();
+            services.AddScoped<ActivityService>();
 
             return services;
         }
