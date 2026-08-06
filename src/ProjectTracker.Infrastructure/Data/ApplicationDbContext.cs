@@ -49,7 +49,7 @@ namespace ProjectTracker.Data
                 e.HasOne(x => x.Sprint)
                     .WithMany(s => s.Tasks)
                     .HasForeignKey(x => x.SprintId)
-                    .OnDelete(DeleteBehavior.SetNull);
+                    .OnDelete(DeleteBehavior.NoAction);
 
                 e.HasOne(x => x.AssignedEmployee)
                     .WithMany(emp => emp.AssignedTasks)
