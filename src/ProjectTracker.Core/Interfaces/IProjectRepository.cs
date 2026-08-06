@@ -5,13 +5,16 @@ namespace ProjectTracker.Interfaces
 {
     public interface IProjectRepository
     {
-       public List<Project> GetAll();
-       public Project GetById(int id);
-       public List<ProjectTask> GetTasksByProjectId(int projectId);
-       public void Add(Project project);
-       public void Update(Project project);
-       public void Delete(int id);
-       public int Count();
-       public int ActiveCount();
+        List<Project> GetAll();
+        List<Project> GetByIds(IEnumerable<int> projectIds);
+        Project? GetById(int id);
+        List<ProjectTask> GetTasksByProjectId(int projectId);
+        void Add(Project project);
+        void Update(Project project);
+        void Delete(int id);
+        bool Exists(int id);
+        int Count();
+        int ActiveCount();
+        int CompletedCount();
     }
 }

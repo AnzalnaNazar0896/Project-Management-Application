@@ -1,0 +1,14 @@
+@model ProjectTracker.Models.Models.DTOs.Search.SearchResultsDTO
+@{ ViewData["Title"] = "Search"; }
+<h1 class="page-title">Search</h1>
+@if (!string.IsNullOrWhiteSpace(Model.Query))
+{
+    <p class="text-muted">Results for "<strong>@Model.Query</strong>"</p>
+}
+<div class="row g-3">
+    <div class="col-md-6"><div class="panel"><h5>Projects</h5><ul class="list-unstyled mb-0">@foreach (var item in Model.Projects) { <li class="mb-2"><a href="@item.Url">@item.Title</a><br /><small class="text-muted">@item.Subtitle</small></li> }</ul></div></div>
+    <div class="col-md-6"><div class="panel"><h5>Tasks</h5><ul class="list-unstyled mb-0">@foreach (var item in Model.Tasks) { <li class="mb-2"><a href="@item.Url">@item.Title</a><br /><small class="text-muted">@item.Subtitle</small></li> }</ul></div></div>
+    <div class="col-md-6"><div class="panel"><h5>Boards</h5><ul class="list-unstyled mb-0">@foreach (var item in Model.Boards) { <li class="mb-2"><a href="@item.Url">@item.Title</a><br /><small class="text-muted">@item.Subtitle</small></li> }</ul></div></div>
+    <div class="col-md-6"><div class="panel"><h5>Sprints</h5><ul class="list-unstyled mb-0">@foreach (var item in Model.Sprints) { <li class="mb-2"><a href="@item.Url">@item.Title</a><br /><small class="text-muted">@item.Subtitle</small></li> }</ul></div></div>
+    <div class="col-md-6"><div class="panel"><h5>Employees</h5><ul class="list-unstyled mb-0">@foreach (var item in Model.Employees) { <li class="mb-2"><a href="@item.Url">@item.Title</a><br /><small class="text-muted">@item.Subtitle</small></li> }</ul></div></div>
+</div>

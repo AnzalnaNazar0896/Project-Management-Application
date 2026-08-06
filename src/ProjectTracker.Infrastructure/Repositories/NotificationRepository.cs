@@ -1,11 +1,7 @@
-﻿using ProjectTracker.Core.Interfaces;
+﻿using Microsoft.EntityFrameworkCore;
+using ProjectTracker.Core.Interfaces;
 using ProjectTracker.Data;
 using ProjectTracker.Models.Models.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ProjectTracker.Infrastructure.Repositories
 {
@@ -13,35 +9,34 @@ namespace ProjectTracker.Infrastructure.Repositories
     {
         private readonly ApplicationDbContext _context;
 
-        public NotificationRepository(
-            ApplicationDbContext context)
+        public NotificationRepository(ApplicationDbContext context)
         {
             _context = context;
         }
 
-        public List<Notification> GetByReceiver(string receiver)
-        {
-            return _context.Notifications
+        public List<Notification> GetAll() =>
+            _context.Notifications.OrderByDescending(x => x.CreatedDate).ToList();
+
+        public List<Notification> GetByReceiver(string receiver) =>
+            _context.Notifications
                 .Where(x => x.Receiver == receiver)
                 .OrderByDescending(x => x.CreatedDate)
                 .ToList();
-        }
 
-        public List<Notification> GetUnread(string receiver)
-        {
-            return _context.Notifications
-                .Where(x =>
-                    x.Receiver == receiver &&
-                    !x.IsRead)
+        public List<Notification> GetRecent(int take) =>
+            _context.Notifications
+                .OrderByDescending(x => x.CreatedDate)
+                .Take(take)
+                .ToList();
+
+        public List<Notification> GetUnread(string receiver) =>
+            _context.Notifications
+                .Where(x => x.Receiver == receiver && !x.IsRead)
                 .OrderByDescending(x => x.CreatedDate)
                 .ToList();
-        }
 
-        public Notification GetById(int id)
-        {
-            return _context.Notifications
-                .FirstOrDefault(x => x.Id == id);
-        }
+        public Notification? GetById(int id) =>
+            _context.Notifications.FirstOrDefault(x => x.Id == id);
 
         public void Add(Notification notification)
         {
@@ -57,14 +52,16 @@ namespace ProjectTracker.Infrastructure.Repositories
 
         public void Delete(int id)
         {
-            var notification = _context.Notifications
-                .FirstOrDefault(x => x.Id == id);
-
+            var notification = GetById(id);
             if (notification != null)
             {
                 _context.Notifications.Remove(notification);
                 _context.SaveChanges();
             }
         }
+
+        public bool Exists(int id) => _context.Notifications.Any(x => x.Id == id);
+
+        public int Count() => _context.Notifications.Count();
     }
 }

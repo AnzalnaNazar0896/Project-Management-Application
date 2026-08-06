@@ -1,32 +1,66 @@
 ﻿using ProjectTracker.Core.Interfaces;
+using ProjectTracker.Core.Mapping;
 using ProjectTracker.Models.Models.DTOs.Sprint;
 using ProjectTracker.Models.Models.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ProjectTracker.Core.Services
 {
     public class SprintService
     {
         private readonly ISprintRepository _repository;
+        private readonly IProjectMemberRepository _memberRepository;
+        private readonly NotificationService _notificationService;
 
-        public SprintService(ISprintRepository repository)
+        public SprintService(
+            ISprintRepository repository,
+            IProjectMemberRepository memberRepository,
+            NotificationService notificationService)
         {
             _repository = repository;
-        }
-        public List<Sprint> GetProjectSprints(int projectId)
-        {
-            return _repository.GetByProjectId(projectId);
+            _memberRepository = memberRepository;
+            _notificationService = notificationService;
         }
 
-        public void CreateSprint(CreateSprintDTO model)
+        public List<Sprint> GetProjectSprints(int projectId) => _repository.GetByProjectId(projectId);
+
+        public List<SprintSummaryDTO> GetAllSummaries()
+        {
+            return _repository.GetAll().Select(s =>
+            {
+                var tasks = s.Tasks ?? new List<Tasks>();
+                var completed = tasks.Count(t => t.Status.IsCompleted());
+                return s.ToSummary(completed, tasks.Count);
+            }).ToList();
+        }
+
+        public SprintDetailsDTO? GetSprintDetails(int id)
+        {
+            var sprint = _repository.GetById(id);
+            if (sprint == null)
+                return null;
+
+            var tasks = sprint.Tasks ?? new List<Tasks>();
+            var completed = tasks.Count(t => t.Status.IsCompleted());
+            var progress = tasks.Count == 0 ? 0 : (int)Math.Round(completed * 100.0 / tasks.Count);
+
+            return new SprintDetailsDTO
+            {
+                Id = sprint.Id,
+                SprintName = sprint.SprintName,
+                StartDate = sprint.StartDate,
+                EndDate = sprint.EndDate,
+                Status = sprint.Status.ToString(),
+                ProjectId = sprint.ProjectId,
+                ProjectName = sprint.Project?.ProjectName ?? "",
+                Progress = progress,
+                Tasks = tasks.Select(t => t.ToSummary()).ToList()
+            };
+        }
+
+        public int CreateSprint(CreateSprintDTO model)
         {
             if (model.EndDate < model.StartDate)
-                throw new Exception(
-                    "End date cannot be before start date.");
+                throw new InvalidOperationException("End date cannot be before start date.");
 
             var sprint = new Sprint
             {
@@ -40,6 +74,21 @@ namespace ProjectTracker.Core.Services
             };
 
             _repository.Add(sprint);
+
+            var members = _memberRepository.GetByProjectId(model.ProjectId);
+            foreach (var member in members)
+            {
+                var email = member.Employee?.Email;
+                if (!string.IsNullOrWhiteSpace(email))
+                    _notificationService.NotifySprintCreated(sprint.SprintName, email);
+            }
+
+            return sprint.Id;
         }
+
+        public int Count() => _repository.Count();
+
+        public Sprint? GetCurrentForProject(int projectId) =>
+            _repository.GetCurrentForProject(projectId);
     }
 }
