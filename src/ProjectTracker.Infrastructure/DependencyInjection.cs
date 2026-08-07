@@ -3,6 +3,7 @@ using ProjectTracker.Core.Interfaces;
 using ProjectTracker.Core.Services;
 using ProjectTracker.Infrastructure.Email;
 using ProjectTracker.Infrastructure.Repositories;
+using ProjectTracker.Infrastructure.Services;
 using ProjectTracker.Interfaces;
 using ProjectTracker.Services;
 
@@ -37,6 +38,7 @@ namespace ProjectTracker.Infrastructure
             services.AddScoped<EmployeeService>();
             services.AddScoped<ProjectAccessService>();
             services.AddScoped<ActivityService>();
+            services.AddScoped<IEmployeeProvisioningService, EmployeeProvisioningService>();
 
             return services;
         }

@@ -5,7 +5,7 @@
 namespace ProjectTracker.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class SyncModelSnapshot : Migration
+    public partial class ForeignKey_fix : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

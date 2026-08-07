@@ -1,0 +1,41 @@
+@model List<ProjectTracker.Models.Models.DTOs.Team.TeamMemberListItemDTO>
+@{
+    ViewData["Title"] = "Team";
+}
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="page-title mb-0">Team</h1>
+    <a class="btn btn-primary" asp-action="Create"><i class="bi bi-person-plus"></i> New team member</a>
+</div>
+
+@if (TempData["SuccessMessage"] is string success)
+{
+    <div class="alert alert-success">@success</div>
+}
+
+<div class="panel">
+    <table class="table table-dark table-dark-custom mb-0">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Department</th>
+                <th>Role</th>
+                <th>Login</th>
+                <th>Projects</th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var m in Model)
+        {
+            <tr>
+                <td>@m.Name</td>
+                <td>@m.Email</td>
+                <td>@(m.Department ?? "—")</td>
+                <td>@(m.ApplicationRole ?? "—")</td>
+                <td>@(m.HasLogin ? "Yes" : "No")</td>
+                <td>@m.ProjectCount</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+</div>

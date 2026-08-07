@@ -12,8 +12,8 @@ using ProjectTracker.Data;
 namespace ProjectTracker.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260806204128_SyncModelSnapshot")]
-    partial class SyncModelSnapshot
+    [Migration("20260806204128_ForeignKey_fix")]
+    partial class ForeignKey_fix
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
