@@ -10,5 +10,6 @@ namespace ProjectTracker.Models.Models.DTOs.Team
         public bool HasLogin { get; set; }
         public string? ApplicationRole { get; set; }
         public int ProjectCount { get; set; }
+        public List<string> Projects { get; set; } = new();
     }
 }

@@ -11,47 +11,53 @@
     <title>@ViewData["Title"] - ProjectTracker</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/_Layout.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/profile.css" asp-append-version="true" />
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
 </head>
 <body class="theme-dark">
-<div class="app-container">
-    <aside class="sidebar">
-        <div class="logo"><i class="bi bi-kanban-fill me-2"></i>Project Tracker</div>
-        <form class="search-form px-2 mb-3" method="get" asp-controller="Search" asp-action="Index">
-            <div class="input-group input-group-sm">
-                <input type="text" name="q" class="form-control" placeholder="Search..." />
-                <button class="btn btn-outline-light" type="submit"><i class="bi bi-search"></i></button>
-            </div>
-        </form>
-        <ul class="menu">
-            <li><a class="@(controller == "Dashboard" ? "active" : "")" asp-controller="Dashboard" asp-action="Index"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
-            <li><a class="@(controller == "Projects" ? "active" : "")" asp-controller="Projects" asp-action="Index"><i class="bi bi-folder2-open"></i> Projects</a></li>
-            <li><a class="@(controller == "Boards" ? "active" : "")" asp-controller="Boards" asp-action="Index"><i class="bi bi-columns-gap"></i> Boards</a></li>
-            <li><a class="@(controller == "Sprints" ? "active" : "")" asp-controller="Sprints" asp-action="Index"><i class="bi bi-calendar2-week"></i> Sprints</a></li>
-            <li><a class="@(controller == "Tasks" ? "active" : "")" asp-controller="Tasks" asp-action="Index"><i class="bi bi-check2-square"></i> Tasks</a></li>
-            <li><a asp-controller="Tasks" asp-action="MyTasks"><i class="bi bi-person-check"></i> My Tasks</a></li>
-            <li><a class="@(controller == "Reports" ? "active" : "")" asp-controller="Reports" asp-action="Index"><i class="bi bi-bar-chart-line"></i> Reports</a></li>
-            <li><a class="@(controller == "Notifications" ? "active" : "")" asp-controller="Notifications" asp-action="Index"><i class="bi bi-bell"></i> Notifications</a></li>
-            <li><a class="@(controller == "Comments" ? "active" : "")" asp-controller="Comments" asp-action="Index"><i class="bi bi-chat-dots"></i> Comments</a></li>
-            <li><a class="@(controller == "Attachments" ? "active" : "")" asp-controller="Attachments" asp-action="Index"><i class="bi bi-paperclip"></i> Attachments</a></li>
-            @if (User.IsInRole(AppRoles.Admin))
-            {
-                <li><a class="@(controller == "Team" ? "active" : "")" asp-controller="Team" asp-action="Index"><i class="bi bi-people"></i> Team</a></li>
-            }
-        </ul>
-        <div class="sidebar-footer mt-auto">
-            <form asp-controller="Account" asp-action="Logout" method="post" class="d-grid">
-                @Html.AntiForgeryToken()
-                <button type="submit" class="btn btn-sm btn-outline-light"><i class="bi bi-box-arrow-right"></i> Logout</button>
+    <div class="app-container">
+        <aside class="sidebar">
+            <div class="logo"><i class="bi bi-kanban-fill me-2"></i>Project Tracker</div>
+            <form class="search-form px-2 mb-3" method="get" asp-controller="Search" asp-action="Index">
+                <div class="input-group input-group-sm">
+                    <input type="text" name="q" class="form-control" placeholder="Search..." />
+                    <button class="btn btn-outline-light" type="submit"><i class="bi bi-search"></i></button>
+                </div>
             </form>
-        </div>
-    </aside>
-    <main class="content">
-        @RenderBody()
-    </main>
-</div>
-<script src="~/lib/jquery/dist/jquery.min.js"></script>
-<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-@RenderSection("Scripts", required: false)
+            <ul class="menu">
+                <li><a class="@(controller == "Dashboard" ? "active" : "")" asp-controller="Dashboard" asp-action="Index"><i class="bi bi-speedometer2"></i> Dashboard</a></li>
+                <li><a class="@(controller == "Projects" ? "active" : "")" asp-controller="Projects" asp-action="Index"><i class="bi bi-folder2-open"></i> Projects</a></li>
+                <li><a class="@(controller == "Boards" ? "active" : "")" asp-controller="Boards" asp-action="Index"><i class="bi bi-columns-gap"></i> Boards</a></li>
+                <li><a class="@(controller == "Sprints" ? "active" : "")" asp-controller="Sprints" asp-action="Index"><i class="bi bi-calendar2-week"></i> Sprints</a></li>
+                <li><a class="@(controller == "Tasks" ? "active" : "")" asp-controller="Tasks" asp-action="Index"><i class="bi bi-check2-square"></i> Tasks</a></li>
+                <li><a asp-controller="Tasks" asp-action="MyTasks"><i class="bi bi-person-check"></i> My Tasks</a></li>
+                <li><a class="@(controller == "Reports" ? "active" : "")" asp-controller="Reports" asp-action="Index"><i class="bi bi-bar-chart-line"></i> Reports</a></li>
+                <li><a class="@(controller == "Notifications" ? "active" : "")" asp-controller="Notifications" asp-action="Index"><i class="bi bi-bell"></i> Notifications</a></li>
+                <li><a class="@(controller == "Comments" ? "active" : "")" asp-controller="Comments" asp-action="Index"><i class="bi bi-chat-dots"></i> Comments</a></li>
+                <li><a class="@(controller == "Attachments" ? "active" : "")" asp-controller="Attachments" asp-action="Index"><i class="bi bi-paperclip"></i> Attachments</a></li>
+                @if (User.IsInRole(AppRoles.Admin))
+                {
+                    <li><a class="@(controller == "Team" ? "active" : "")" asp-controller="Team" asp-action="Index"><i class="bi bi-people"></i> Team</a></li>
+                }
+            </ul>
+            <div class="sidebar-footer mt-auto">
+                <a asp-controller="Account" asp-action="Profile" class="profile-link"> 
+                    <i class="bi bi-person-circle"></i> 
+                    <span>Profile Settings</span>
+                </a>
+                <form asp-controller="Account" asp-action="Logout" method="post" class="d-grid">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn btn-sm btn-outline-light"><i class="bi bi-box-arrow-right"></i> Logout</button>
+                </form>
+            </div>
+        </aside>
+        <main class="content">
+            @RenderBody()
+        </main>
+    </div>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    @RenderSection("Scripts", required: false)
 </body>
 </html>

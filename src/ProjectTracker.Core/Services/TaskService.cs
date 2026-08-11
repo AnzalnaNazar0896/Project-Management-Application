@@ -102,7 +102,8 @@ namespace ProjectTracker.Core.Services
                 BoardId = task.BoardId,
                 SprintId = task.SprintId,
                 AssignedEmployeeId = task.AssignedEmployeeId,
-                ProjectId = task.Board?.ProjectId ?? 0
+                ProjectId = task.Board?.ProjectId ?? 0,
+                CreatedDate = task.CreatedDate
             };
         }
 

@@ -9,12 +9,20 @@ namespace ProjectTracker.Core.Interfaces
         public int? EmployeeId { get; init; }
     }
 
+    public class EditEmployeeResult
+    {
+        public bool Success { get; init; }
+        public string? ErrorMessage { get; init; }
+    }
+
     public interface IEmployeeProvisioningService
     {
-        Task<EmployeeProvisioningResult> CreateEmployeeWithUserAsync(
-            CreateEmployeeUserDTO model,
-            string actorDisplayName);
+        Task<EmployeeProvisioningResult> CreateEmployeeWithUserAsync(CreateEmployeeUserDTO model,string actorDisplayName);
 
-        Task<List<TeamMemberListItemDTO>> GetTeamRosterAsync();
+        Task<EditEmployeeResult> UpdateEmployeeAsync(EditEmployeeUserDTO model,string actorDisplayName);
+
+        Task<EditEmployeeUserDTO?> GetEmployeeForEditAsync(int employeeId);
+
+        Task<List<TeamMemberListItemDTO>> GetTeamMembersAsync();
     }
 }

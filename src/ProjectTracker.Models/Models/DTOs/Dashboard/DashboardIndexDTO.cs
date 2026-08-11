@@ -25,5 +25,8 @@ namespace ProjectTracker.Models.Models.DTOs.Dashboard
         public List<NotificationDTO> RecentNotifications { get; set; } = new();
         public SprintSummaryDTO? CurrentSprint { get; set; }
         public List<ProjectMemberSummaryDTO> TeamMembers { get; set; } = new();
+        public List<DashboardProjectDTO> Projects { get; set; } = new();
+        public List<DashboardTaskDTO> Tasks { get; set; } = new();
+
     }
 }

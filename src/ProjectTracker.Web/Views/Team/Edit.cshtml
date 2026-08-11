@@ -1,15 +1,44 @@
-@model ProjectTracker.Models.Models.DTOs.Team.CreateEmployeeUserDTO
+@model ProjectTracker.Models.Models.DTOs.Team.EditEmployeeUserDTO
 @{
-    ViewData["Title"] = "New team member";
+    ViewData["Title"] = "Edit team member";
     var projects = ViewBag.Projects as List<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem> ?? new();
     var roles = ViewBag.Roles as List<Microsoft.AspNetCore.Mvc.Rendering.SelectListItem> ?? new();
 }
-<h1 class="page-title">New team member</h1>
-<p class="text-muted">Creates an employee record, login account, and optional project access.</p>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+        <h1 class="page-title mb-1">Edit team member</h1>
+        <p class="text-muted mb-0">Update employee information, account role and project access.</p>
+    </div>
+    <a class="btn btn-outline-light" asp-action="Index">
+        <i class="bi bi-arrow-left"></i> Back to Team
+    </a>
+</div>
+
+@if (Model.HasLogin)
+{
+    <div class="alert alert-info">
+        <i class="bi bi-info-circle"></i>
+        This team member has a login account. Changing the email will also update their login email.
+    </div>
+}
+else
+{
+    <div class="alert alert-warning">
+        <i class="bi bi-exclamation-triangle"></i>
+        This employee does not currently have a login account. Employee information can still be updated.
+    </div>
+}
 
 <div class="panel">
-    <form asp-action="Create" method="post">
+    <form asp-action="Edit" method="post">
+        <input asp-for="EmployeeId" type="hidden" />
+        <input asp-for="HasLogin" type="hidden" />
+
         <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+        <h5 class="mb-3">Personal information</h5>
+
         <div class="row">
             <div class="col-md-6 mb-3">
                 <label asp-for="FirstName" class="form-label"></label>
@@ -22,6 +51,7 @@
                 <span asp-validation-for="LastName" class="text-danger"></span>
             </div>
         </div>
+
         <div class="row">
             <div class="col-md-6 mb-3">
                 <label asp-for="Email" class="form-label"></label>
@@ -31,71 +61,61 @@
             <div class="col-md-6 mb-3">
                 <label asp-for="Department" class="form-label"></label>
                 <input asp-for="Department" class="form-control" />
+                <span asp-validation-for="Department" class="text-danger"></span>
             </div>
         </div>
+
         <div class="mb-3">
-            <label asp-for="Availability" class="form-label"></label>
-            <input asp-for="Availability" class="form-control" />
+
+            <label asp-for="Availability" class="form-label">
+                Availability
+            </label>
+
+            <select asp-for="Availability"
+                    class="form-select">
+
+                <option value="Available">Available</option>
+                <option value="Busy">Busy</option>
+                <option value="Unavailable">Unavailable</option>
+                <option value="On Leave">On Leave</option>
+
+            </select>
+
+            <span asp-validation-for="Availability"
+                  class="text-danger">
+            </span>
+
         </div>
-        <div class="row">
-            <div class="col-md-6 mb-3">
-                <label asp-for="Password" class="form-label"></label>
-                <input asp-for="Password" class="form-control" autocomplete="new-password" />
-                <span asp-validation-for="Password" class="text-danger"></span>
-                <small class="text-muted">At least 8 characters with upper, lower, and digit.</small>
-            </div>
-            <div class="col-md-6 mb-3">
-                <label asp-for="ConfirmPassword" class="form-label"></label>
-                <input asp-for="ConfirmPassword" class="form-control" autocomplete="new-password" />
-                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-            </div>
-        </div>
-        <div class="mb-3">
+
+        <hr />
+
+        <h5 class="mb-3">Access & role</h5>
+
+        <div class="mb-4">
             <label asp-for="Role" class="form-label"></label>
             <select asp-for="Role" class="form-select" asp-items="roles"></select>
+            <span asp-validation-for="Role" class="text-danger"></span>
+            <small class="text-muted">This updates the ASP.NET Identity application role.</small>
         </div>
-        <div class="mb-3">
 
-            <label class="form-label">Projects</label>
-
-            <div class="project-selector">
-
-                <button type="button"
-                        class="project-selector-button"
-                        id="projectDropdownButton">
-
-                    <span id="projectSelectedText">
-                        Select projects
-                    </span>
-
-                    <i class="bi bi-chevron-down"></i>
-
-                </button>
-
-                <div class="project-dropdown"
-                     id="projectDropdown">
-
-                    @foreach (var project in (IEnumerable<SelectListItem>)ViewBag.Projects)
-                    {
-                        <label class="project-option">
-
-                            <input type="checkbox"
-                                   name="ProjectIds"
-                                   value="@project.Value"
-                                   @(project.Selected ? "checked" : "") />
-
-                            <span>@project.Text</span>
-
-                        </label>
-                    }
-
-                </div>
-
-            </div>
-
+        <div class="mb-4">
+            <label asp-for="ProjectIds" class="form-label">Project access</label>
+            <select asp-for="ProjectIds" class="form-select" multiple size="7">
+                @foreach (var p in projects)
+                {
+                    var id = int.Parse(p.Value!);
+                    <option value="@p.Value" selected="@(Model.ProjectIds.Contains(id) ? "selected" : null)">@p.Text</option>
+                }
+            </select>
+            <small class="text-muted">Select the projects this team member should have access to. Hold Ctrl on Windows to select multiple projects.</small>
         </div>
-        <button type="submit" class="btn btn-primary">Create account</button>
-        <a class="btn btn-outline-light" asp-action="Index">Cancel</a>
+
+        <div class="d-flex gap-2">
+            <button type="submit" class="btn btn-primary">
+                <i class="bi bi-check-lg"></i> Save changes
+            </button>
+            <a class="btn btn-outline-light" asp-action="Index">Cancel</a>
+        </div>
     </form>
 </div>
 

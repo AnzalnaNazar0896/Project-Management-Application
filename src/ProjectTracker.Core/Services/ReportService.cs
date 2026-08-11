@@ -38,30 +38,15 @@ namespace ProjectTracker.Core.Services
                     Label = p.ProjectName,
                     Value = p.Progress
                 }).ToList(),
-                SprintProgress = sprints.Select(s =>
-                {
-                    var sprintTasks = s.Tasks ?? new List<Models.Models.Entities.Tasks>();
-                    var completed = sprintTasks.Count(t => t.Status.IsCompleted());
-                    var progress = sprintTasks.Count == 0 ? 0 : (int)Math.Round(completed * 100.0 / sprintTasks.Count);
-                    return new ChartItemDTO { Label = s.SprintName, Value = progress };
-                }).ToList(),
-                TasksByStatus = tasks
-                    .GroupBy(t => t.Status.ToString())
-                    .Select(g => new ChartItemDTO { Label = g.Key, Value = g.Count() })
-                    .ToList(),
-                TasksByPriority = tasks
-                    .GroupBy(t => t.Priority.ToString())
-                    .Select(g => new ChartItemDTO { Label = g.Key, Value = g.Count() })
-                    .ToList(),
                 CompletedVsPending = new List<ChartItemDTO>
                 {
                     new() { Label = "Completed", Value = tasks.Count(t => t.Status.IsCompleted()) },
                     new() { Label = "Pending", Value = tasks.Count(t => !t.Status.IsCompleted()) }
                 },
-                MemberWorkload = _employeeRepository.GetAll().Select(e => new ChartItemDTO
+                MemberAvailability = _employeeRepository.GetAll().Select(e => new MemberAvailabilityDTO
                 {
-                    Label = e.FullName,
-                    Value = tasks.Count(t => t.AssignedEmployeeId == e.Id)
+                    MemberName = e.FullName,
+                    Availability = string.IsNullOrWhiteSpace(e.Availability) ? "Available" : e.Availability
                 }).ToList(),
                 OverdueTasks = _taskRepository.GetOverdue().Select(t => new TaskSummaryItemDTO
                 {
@@ -71,6 +56,7 @@ namespace ProjectTracker.Core.Services
                     DueDate = t.DueDate,
                     AssignedTo = t.AssignedEmployee?.FullName ?? "Unassigned"
                 }).ToList()
+             
             };
         }
     }

@@ -206,3 +206,332 @@ body.theme-dark {
     .sidebar { width: 100%; }
     .kanban-board { grid-template-columns: 1fr; }
 }
+.reports-page {
+    padding: 20px;
+}
+
+.reports-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    align-items: start;
+}
+
+.report-card {
+    height: 320px;
+    padding: 16px;
+    background: #1d2638;
+    border: 1px solid #303b51;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.report-header {
+    margin-bottom: 10px;
+}
+
+    .report-header h5 {
+        margin: 0;
+        color: #ffffff;
+        font-size: 16px;
+        font-weight: 600;
+    }
+
+/* Bar chart */
+.chart-container {
+    position: relative;
+    width: 100%;
+    height: 250px;
+}
+
+/* Circular chart */
+.doughnut-container {
+    width: 230px;
+    height: 230px;
+    margin: 0 auto;
+}
+
+.chart-container canvas {
+    width: 100% !important;
+    height: 100% !important;
+}
+
+@media (max-width: 900px) {
+    .reports-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .report-card {
+        height: 320px;
+    }
+}
+.member-availability {
+    margin-top: 10px;
+    max-height: 235px;
+    overflow-y: auto;
+}
+
+.member-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 5px;
+    border-bottom: 1px solid #303b51;
+}
+
+    .member-row:last-child {
+        border-bottom: none;
+    }
+
+.member-name {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    color: #e5e7eb;
+    font-size: 13px;
+}
+
+    .member-name i {
+        color: #8faeff;
+        font-size: 17px;
+    }
+
+.availability-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 9px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+}
+
+
+/* Available */
+
+.availability-status.available {
+    color: #34d399;
+    background: rgba(16, 185, 129, 0.12);
+}
+
+    .availability-status.available .status-dot {
+        background: #10b981;
+    }
+
+
+/* Busy */
+
+.availability-status.busy {
+    color: #fbbf24;
+    background: rgba(245, 158, 11, 0.12);
+}
+
+    .availability-status.busy .status-dot {
+        background: #f59e0b;
+    }
+
+
+/* Unavailable */
+
+.availability-status.unavailable {
+    color: #f87171;
+    background: rgba(239, 68, 68, 0.12);
+}
+
+    .availability-status.unavailable .status-dot {
+        background: #ef4444;
+    }
+
+
+/* Leave */
+
+.availability-status.leave {
+    color: #a78bfa;
+    background: rgba(139, 92, 246, 0.12);
+}
+
+    .availability-status.leave .status-dot {
+        background: #8b5cf6;
+    }
+
+/* ============================
+   Project Multi Select
+   ============================ */
+
+.project-selector {
+    position: relative;
+    width: 100%;
+}
+
+.project-selector-button {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 12px;
+    background: #111827;
+    color: #e5e7eb;
+    border: 1px solid #374151;
+    border-radius: 6px;
+    cursor: pointer;
+    text-align: left;
+}
+
+    .project-selector-button:hover {
+        border-color: #4f80ff;
+    }
+
+.project-dropdown {
+    display: none;
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    width: 100%;
+    max-height: 220px;
+    overflow-y: auto;
+    background: #111827;
+    border: 1px solid #374151;
+    border-radius: 6px;
+    padding: 6px;
+    z-index: 1000;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+}
+
+    .project-dropdown.show {
+        display: block;
+    }
+
+.project-option {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 9px 10px;
+    color: #e5e7eb;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+    .project-option:hover {
+        background: #1f2937;
+    }
+
+    .project-option input {
+        width: 15px;
+        height: 15px;
+        accent-color: #4f80ff;
+    }
+
+    .project-option span {
+        font-size: 13px;
+    }
+.project-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    max-width: 350px;
+}
+
+.project-tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 9px;
+    background: rgba(79, 128, 255, 0.12);
+    border: 1px solid rgba(79, 128, 255, 0.25);
+    color: #9db7ff;
+    border-radius: 12px;
+    font-size: 11px;
+    white-space: nowrap;
+}
+/* Dashboard links */
+.dashboard-link {
+    color: #8fb3ff;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+    .dashboard-link:hover {
+        color: #b9ceff;
+        text-decoration: underline;
+    }
+
+
+/* Recent Projects */
+.recent-project {
+    margin-bottom: 16px;
+}
+
+.project-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.progress-value {
+    color: #94a3b8;
+    font-size: 13px;
+}
+
+.project-progress {
+    height: 7px;
+    background: #111827;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+    .project-progress .progress-bar {
+        background: #4f80ff;
+        border-radius: 10px;
+    }
+
+
+/* Recent Tasks */
+.recent-task {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.task-status-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 8px;
+    border-radius: 5px;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+
+/* Status badges */
+.status-completed {
+    background: #166534;
+    color: #dcfce7;
+}
+
+.status-inprogress {
+    background: #1d4ed8;
+    color: #dbeafe;
+}
+
+.status-review {
+    background: #92400e;
+    color: #fef3c7;
+}
+
+.status-todo {
+    background: #475569;
+    color: #f1f5f9;
+}
+
+.status-default {
+    background: #374151;
+    color: #e5e7eb;
+}

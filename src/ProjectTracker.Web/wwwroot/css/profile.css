@@ -1,0 +1,153 @@
+﻿.profile-page {
+    padding: 30px;
+    max-width: 1100px;
+}
+
+.profile-header {
+    margin-bottom: 25px;
+}
+
+    .profile-header h1 {
+        margin: 0;
+        color: #ffffff;
+        font-size: 28px;
+        font-weight: 700;
+    }
+
+    .profile-header p {
+        margin-top: 7px;
+        color: #7f8da5;
+        font-size: 14px;
+    }
+
+.profile-card {
+    background: #1d2638;
+    border: 1px solid #303b51;
+    border-radius: 10px;
+    padding: 30px;
+    max-width: 850px;
+}
+
+.profile-avatar {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #4f80ff;
+    color: #ffffff;
+    font-size: 30px;
+    margin-bottom: 15px;
+}
+
+.profile-info h2 {
+    margin: 0;
+    color: #ffffff;
+    font-size: 21px;
+}
+
+.profile-info span {
+    display: block;
+    margin-top: 5px;
+    color: #7f8da5;
+    font-size: 14px;
+}
+
+.profile-divider {
+    height: 1px;
+    background: #303b51;
+    margin: 25px 0;
+}
+
+.profile-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+}
+
+.profile-field label {
+    display: block;
+    margin-bottom: 7px;
+    color: #8c9ab1;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.field-value {
+    min-height: 42px;
+    display: flex;
+    align-items: center;
+    padding: 0 13px;
+    background: #141b2b;
+    border: 1px solid #303b51;
+    border-radius: 6px;
+    color: #ffffff;
+    font-size: 14px;
+}
+
+.profile-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 30px;
+}
+
+.btn-primary,
+.btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 9px 16px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background: #4f80ff;
+    border: 1px solid #4f80ff;
+    color: #ffffff;
+}
+
+    .btn-primary:hover {
+        background: #3f70ed;
+        color: #ffffff;
+    }
+
+.btn-secondary {
+    background: transparent;
+    border: 1px solid #3b4962;
+    color: #c7d0df;
+}
+
+    .btn-secondary:hover {
+        background: #27334a;
+        color: #ffffff;
+    }
+
+@media (max-width: 700px) {
+
+    .profile-page {
+        padding: 20px;
+    }
+
+    .profile-card {
+        padding: 20px;
+    }
+
+    .profile-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .profile-actions {
+        flex-direction: column;
+    }
+
+    .btn-primary,
+    .btn-secondary {
+        justify-content: center;
+    }
+}

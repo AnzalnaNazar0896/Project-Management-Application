@@ -21,5 +21,6 @@ namespace ProjectTracker.Models.Models.DTOs.Task
         public int? SprintId { get; set; }
         public int? AssignedEmployeeId { get; set; }
         public int ProjectId { get; set; }
+        public DateTime? CreatedDate { get; set; }
     }
 }

@@ -15,5 +15,6 @@ namespace ProjectTracker.Models.Models.DTOs.Task
         public string? ProjectName { get; set; }
         public string? AssignedTo { get; set; }
         public int? AssignedEmployeeId { get; set; }
+        public DateTime CreatedDate { get; set; }
     }
 }

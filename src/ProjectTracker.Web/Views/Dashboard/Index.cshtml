@@ -23,21 +23,63 @@
     <div class="col-lg-6">
         <div class="panel">
             <h5>Recent Projects</h5>
-            <ul class="list-unstyled mb-0">
-                @foreach (var p in Model.RecentProjects)
+            <div class="recent-projects">
+
+                @foreach (var project in Model.RecentProjects)
                 {
-                    <li class="mb-2"><a asp-controller="Projects" asp-action="Details" asp-route-id="@p.Id">@p.ProjectName</a> <span class="text-muted">@p.Progress%</span></li>
+                    <div class="recent-project">
+
+                        <div class="project-header">
+                            <a asp-controller="Projects"
+                               asp-action="Details"
+                               asp-route-id="@project.Id"
+                               class="dashboard-link">
+                                @project.ProjectName
+                            </a>
+
+                            <span class="progress-value">
+                                @project.Progress%
+                            </span>
+                        </div>
+
+                        <div class="progress project-progress">
+                            <div class="progress-bar"
+                                 role="progressbar"
+                                 style="width: @project.Progress%"
+                                 aria-valuenow="@project.Progress"
+                                 aria-valuemin="0"
+                                 aria-valuemax="100">
+                            </div>
+                        </div>
+
+                    </div>
                 }
-            </ul>
+
+            </div>
         </div>
         <div class="panel">
             <h5>Recent Tasks</h5>
-            <ul class="list-unstyled mb-0">
-                @foreach (var t in Model.RecentTasks)
+            <div class="recent-tasks">
+
+                @foreach (var task in Model.RecentTasks)
                 {
-                    <li class="mb-2"><a asp-controller="Tasks" asp-action="Details" asp-route-id="@t.Id">@t.Title</a> <span class="badge bg-secondary">@t.Status</span></li>
+                    <div class="recent-task">
+
+                        <a asp-controller="Tasks"
+                           asp-action="Details"
+                           asp-route-id="@task.Id"
+                           class="dashboard-link">
+                            @task.Title
+                        </a>
+
+                        <span class="task-status-badge @GetTaskStatusClass(task.Status)">
+                            @task.Status
+                        </span>
+
+                    </div>
                 }
-            </ul>
+
+            </div>
         </div>
     </div>
     <div class="col-lg-6">
@@ -79,3 +121,18 @@
         </div>
     </div>
 </div>
+
+
+@functions {
+    public string GetTaskStatusClass(string status)
+    {
+        return status switch
+        {
+            "Completed" => "status-completed",
+            "In Progress" => "status-inprogress",
+            "Review" => "status-review",
+            "Todo" => "status-todo",
+            _ => "status-default"
+        };
+    }
+}

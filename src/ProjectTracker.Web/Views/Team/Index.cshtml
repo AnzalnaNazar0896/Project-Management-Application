@@ -20,22 +20,62 @@
                 <th>Email</th>
                 <th>Department</th>
                 <th>Role</th>
-                <th>Login</th>
-                <th>Projects</th>
             </tr>
         </thead>
         <tbody>
-        @foreach (var m in Model)
-        {
-            <tr>
-                <td>@m.Name</td>
-                <td>@m.Email</td>
-                <td>@(m.Department ?? "—")</td>
-                <td>@(m.ApplicationRole ?? "—")</td>
-                <td>@(m.HasLogin ? "Yes" : "No")</td>
-                <td>@m.ProjectCount</td>
-            </tr>
-        }
+
+            @foreach (var m in Model)
+            {
+                <tr>
+
+                    <td>
+                        <strong>@m.Name</strong>
+                    </td>
+
+                    <td>
+                        @m.Email
+                    </td>
+
+                    <td>
+                        @(m.Department ?? "—")
+                    </td>
+
+                    <td>
+
+                        @if (m.Projects != null && m.Projects.Any())
+                        {
+                            <div class="project-tags">
+
+                                @foreach (var project in m.Projects)
+                                {
+                                    <span class="project-tag">
+                                        @project
+                                    </span>
+                                }
+
+                            </div>
+                        }
+                        else
+                        {
+                            <span class="text-muted">No projects</span>
+                        }
+
+                    </td>
+
+                    <td class="text-end">
+
+                        <a asp-action="Edit"
+                           asp-route-id="@m.EmployeeId"
+                           class="btn btn-sm btn-outline-light">
+
+                            <i class="bi bi-pencil"></i>
+                           
+                        </a>
+
+                    </td>
+
+                </tr>
+            }
         </tbody>
     </table>
 </div>

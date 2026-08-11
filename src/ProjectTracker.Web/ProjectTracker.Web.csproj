@@ -4,8 +4,11 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-	<UserSecretsId>projecttracker-web-f7b3a1c2-4d5e-6f78-9abc-def012345678</UserSecretsId>
   </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\css\_Layout.css" />
+  </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="8.0.11" />

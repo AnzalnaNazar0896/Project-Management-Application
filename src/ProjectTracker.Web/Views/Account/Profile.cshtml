@@ -1,0 +1,105 @@
+﻿@model ProjectTracker.Models.Models.DTOs.Account.ProfileDTO
+
+@{
+    ViewData["Title"] = "Profile Settings";
+}
+
+<div class="profile-page">
+
+    <div class="profile-header">
+        <div>
+            <h1>Profile Settings</h1>
+            <p>Manage your personal and account information.</p>
+        </div>
+    </div>
+
+    <div class="profile-card">
+
+        <div class="profile-avatar">
+            <i class="bi bi-person"></i>
+        </div>
+
+        <div class="profile-info">
+            <h2>@Model.FullName</h2>
+            <span>@Model.Email</span>
+        </div>
+
+        <div class="profile-divider"></div>
+
+        <div class="profile-grid">
+
+            <div class="profile-field">
+                <label>First Name</label>
+                <div class="field-value">
+                    @Model.FirstName
+                </div>
+            </div>
+
+            <div class="profile-field">
+                <label>Last Name</label>
+                <div class="field-value">
+                    @Model.LastName
+                </div>
+            </div>
+
+            <div class="profile-field">
+                <label>Full Name</label>
+                <div class="field-value">
+                    @Model.FullName
+                </div>
+            </div>
+
+            <div class="profile-field">
+                <label>Email</label>
+                <div class="field-value">
+                    @Model.Email
+                </div>
+            </div>
+
+            <div class="profile-field">
+                <label>Phone Number</label>
+                <div class="field-value">
+                    @(string.IsNullOrWhiteSpace(Model.PhoneNumber)
+                                        ? "Not provided"
+                                        : Model.PhoneNumber)
+                </div>
+            </div>
+
+            <div class="profile-field">
+                <label>Department</label>
+                <div class="field-value">
+                    @(string.IsNullOrWhiteSpace(Model.Department)
+                                        ? "Not assigned"
+                                        : Model.Department)
+                </div>
+            </div>
+
+            <div class="profile-field">
+                <label>Availability</label>
+                <div class="field-value">
+                    @(string.IsNullOrWhiteSpace(Model.Availability)
+                                        ? "Not specified"
+                                        : Model.Availability)
+                </div>
+            </div>
+
+        </div>
+
+        <div class="profile-actions">
+            <a asp-controller="Account"
+               asp-action="ChangePassword"
+               class="btn-secondary">
+                <i class="bi bi-key"></i>
+                Change Password
+            </a>
+
+            <a asp-controller="Dashboard"
+               asp-action="Index"
+               class="btn-primary">
+                Back to Dashboard
+            </a>
+        </div>
+
+    </div>
+
+</div>

@@ -1,8 +1,9 @@
 using ProjectTracker.Core.Interfaces;
 using ProjectTracker.Core.Mapping;
+using ProjectTracker.Interfaces;
 using ProjectTracker.Models.Models.DTOs.Dashboard;
-using ProjectTracker.Models.Models.DTOs.Sprint;
 using ProjectTracker.Models.Models.DTOs.Project;
+using ProjectTracker.Models.Models.DTOs.Sprint;
 using ProjectTracker.Services;
 
 namespace ProjectTracker.Core.Services
@@ -44,45 +45,74 @@ namespace ProjectTracker.Core.Services
         public DashboardIndexDTO GetDashboard(bool isAdmin, int? employeeId)
         {
             var projects = _projectService.GetProjectsForUser(isAdmin, employeeId);
-            var projectIds = projects.Select(p => p.Id).ToHashSet();
 
+            var projectIds = projects
+                .Select(p => p.Id)
+                .ToHashSet();
+
+            // Recent Projects
             var recentProjects = projects
                 .OrderByDescending(p => p.CreatedDate)
                 .Take(5)
                 .Select(p => p.ToSummary())
                 .ToList();
 
+            // Tasks
             var allTasks = _taskService.GetAllSummaries();
+
             if (!isAdmin && employeeId.HasValue)
             {
                 allTasks = allTasks
-                    .Where(t => projectIds.Contains(t.ProjectId)
-                        || t.AssignedEmployeeId == employeeId)
+                    .Where(t =>
+                        projectIds.Contains(t.ProjectId) ||
+                        t.AssignedEmployeeId == employeeId)
                     .ToList();
             }
 
-            var recentTasks = allTasks.Take(5).ToList();
+            // Recent Tasks
+            var recentTasks = allTasks
+                .OrderByDescending(t => t.CreatedDate)
+                .Take(5)
+                .ToList();
+
+            // Upcoming Deadlines
             var upcoming = allTasks
                 .Where(t => t.DueDate >= DateTime.Today)
                 .OrderBy(t => t.DueDate)
                 .Take(5)
                 .ToList();
 
+            // Current Sprint
             var currentSprint = projectIds.Count > 0
-                ? projectIds.Select(pid => _sprintService.GetCurrentForProject(pid))
+                ? projectIds
+                    .Select(pid => _sprintService.GetCurrentForProject(pid))
                     .FirstOrDefault(s => s != null)
                 : null;
 
             SprintSummaryDTO? currentSprintDto = null;
+
             if (currentSprint != null)
             {
-                var tasks = currentSprint.Tasks ?? new List<Models.Models.Entities.Tasks>();
-                var completed = tasks.Count(t => t.Status.IsCompleted());
-                currentSprintDto = currentSprint.ToSummary(completed, tasks.Count);
+                var sprintTasks =
+                    currentSprint.Tasks ??
+                    new List<Models.Models.Entities.Tasks>();
+
+                var completed = sprintTasks.Count(
+                    t => t.Status.IsCompleted());
+
+                currentSprintDto =
+                    currentSprint.ToSummary(
+                        completed,
+                        sprintTasks.Count);
             }
 
-            var teamMembers = _projectMemberRepository.GetAll()
-                .Where(m => isAdmin || !employeeId.HasValue || projectIds.Contains(m.ProjectId))
+            // Team Members
+            var teamMembers = _projectMemberRepository
+                .GetAll()
+                .Where(m =>
+                    isAdmin ||
+                    !employeeId.HasValue ||
+                    projectIds.Contains(m.ProjectId))
                 .GroupBy(m => m.EmployeeId)
                 .Select(g => g.First())
                 .Take(8)
@@ -91,28 +121,75 @@ namespace ProjectTracker.Core.Services
                     EmployeeId = m.EmployeeId,
                     Name = m.Employee?.FullName ?? "",
                     Role = m.Role,
-                    Availability = m.Employee?.Availability ?? "Available"
+                    Availability =
+                        m.Employee?.Availability ?? "Available"
                 })
                 .ToList();
 
             return new DashboardIndexDTO
             {
+                // Counts
                 TotalProjects = projects.Count,
-                ActiveProjects = projects.Count(p => !p.IsCompleted),
-                CompletedProjects = projects.Count(p => p.IsCompleted),
-                TotalBoards = isAdmin ? _boardService.Count() : _boardService.GetAllSummaries().Count(b => projectIds.Contains(b.ProjectId)),
-                TotalSprints = isAdmin ? _sprintService.Count() : _sprintService.GetAllSummaries().Count(s => projectIds.Contains(s.ProjectId)),
+
+                ActiveProjects =
+                    projects.Count(p => !p.IsCompleted),
+
+                CompletedProjects =
+                    projects.Count(p => p.IsCompleted),
+
+                TotalBoards =
+                    isAdmin
+                        ? _boardService.Count()
+                        : _boardService
+                            .GetAllSummaries()
+                            .Count(b => projectIds.Contains(b.ProjectId)),
+
+                TotalSprints =
+                    isAdmin
+                        ? _sprintService.Count()
+                        : _sprintService
+                            .GetAllSummaries()
+                            .Count(s => projectIds.Contains(s.ProjectId)),
+
                 TotalTasks = allTasks.Count,
-                CompletedTasks = allTasks.Count(t => t.Status == nameof(Models.Models.Enums.TaskStatus.Completed)),
-                PendingTasks = allTasks.Count(t => t.Status == nameof(Models.Models.Enums.TaskStatus.Pending) || t.Status == nameof(Models.Models.Enums.TaskStatus.Todo)),
-                TotalNotifications = _notificationService.Count(),
-                TotalComments = _commentRepository.Count(),
-                TotalAttachments = _attachmentRepository.Count(),
+
+                CompletedTasks =
+                    allTasks.Count(t =>
+                        t.Status ==
+                        nameof(Models.Models.Enums.TaskStatus.Completed)),
+
+                PendingTasks =
+                    allTasks.Count(t =>
+                        t.Status ==
+                            nameof(Models.Models.Enums.TaskStatus.Pending)
+                        ||
+                        t.Status ==
+                            nameof(Models.Models.Enums.TaskStatus.Todo)),
+
+                TotalNotifications =
+                    _notificationService.Count(),
+
+                TotalComments =
+                    _commentRepository.Count(),
+
+                TotalAttachments =
+                    _attachmentRepository.Count(),
+
+                // Dashboard lists
                 RecentProjects = recentProjects,
+
                 RecentTasks = recentTasks,
+
                 UpcomingDeadlines = upcoming,
-                RecentNotifications = _notificationService.GetRecent(5).Select(n => n.ToDto()).ToList(),
+
+                RecentNotifications =
+                    _notificationService
+                        .GetRecent(5)
+                        .Select(n => n.ToDto())
+                        .ToList(),
+
                 CurrentSprint = currentSprintDto,
+
                 TeamMembers = teamMembers
             };
         }

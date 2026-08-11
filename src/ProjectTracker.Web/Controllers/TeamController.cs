@@ -29,7 +29,7 @@ namespace ProjectTracker.Web.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            var roster = await _provisioning.GetTeamRosterAsync();
+            var roster = await _provisioning.GetTeamMembersAsync();
             return View(roster);
         }
 
@@ -39,6 +39,43 @@ namespace ProjectTracker.Web.Controllers
             PopulateProjects();
             PopulateRoles();
             return View(new CreateEmployeeUserDTO());
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Edit(int id)
+        {
+            var model = await _provisioning.GetEmployeeForEditAsync(id);
+            if (model == null)
+                return NotFound();
+
+            PopulateProjects();
+            PopulateRoles();
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(EditEmployeeUserDTO model)
+        {
+            if (!ModelState.IsValid)
+            {
+                PopulateProjects();
+                PopulateRoles();
+                return View(model);
+            }
+
+            var actor = await _currentUser.GetDisplayNameAsync() ?? "Admin";
+            var result = await _provisioning.UpdateEmployeeAsync(model, actor);
+            if (!result.Success)
+            {
+                ModelState.AddModelError(string.Empty, result.ErrorMessage ?? "Could not update team member.");
+                PopulateProjects();
+                PopulateRoles();
+                return View(model);
+            }
+
+            TempData["SuccessMessage"] = "Team member updated successfully.";
+            return RedirectToAction(nameof(Index));
         }
 
         [HttpPost]

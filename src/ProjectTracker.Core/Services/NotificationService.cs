@@ -22,6 +22,27 @@ namespace ProjectTracker.Core.Services
 
         public void Create(string title, string message, string type, string receiver)
         {
+            if (string.IsNullOrWhiteSpace(receiver))
+                return;
+
+            var existingNotifications = _repository.GetByReceiver(receiver);
+
+            bool alreadyExists = existingNotifications.Any(x =>
+                x.Title == title &&
+                x.Message == message &&
+                x.NotificationType == type &&
+                !x.IsRead);
+
+            if (alreadyExists)
+            {
+                _logger.LogInformation(
+                    "Duplicate notification prevented. Type: {Type}, Receiver: {Receiver}",
+                    type,
+                    receiver);
+
+                return;
+            }
+
             _repository.Add(new Notification
             {
                 Title = title,
